@@ -1,27 +1,7 @@
 import { InferSchemaType, model, Schema } from "mongoose";
 import { isEmail } from "validator";
 import Joi from 'joi';
-
-// export interface HubInterface extends Document {
-//   name: string;
-//   email: string | null;
-//   password: string;
-//   instagram: string | null;
-//   twitter: string | null;
-//   tiktok: string | null;
-//   website: string | null;
-//   phone: string | null;
-//   images: [string] | null;
-//   description: string,
-//   address: string;
-//   state: string;
-//   schedule: [{
-//     day: string,
-//     openingTime: string,
-//     closingTime: string
-//   }] | null;
-//   notice: string | null
-// }
+import bycrypt from 'bcrypt';
 
 const hubSchema = new Schema({
   name: {
@@ -37,13 +17,11 @@ const hubSchema = new Schema({
   },
   email: {
     type: String,
-    unique: true,
     lowercase: true,
     validate: [ isEmail, "Please enter a valid email"]
   },
   password: {
     type: String,
-    required: [true, 'Please enter password'],
     minlength: [4, "Password must have a minimum length of 4 letters"]
   },
   instagram: {
@@ -96,7 +74,24 @@ const hubSchema = new Schema({
   }
 }, {timestamps: true});
 
+hubSchema.pre("save", async function(next) {
+  try {
+    const password = this.get('password')
+    if (typeof password !== 'string') {
+      throw new Error("Password must be a string")
+    }
+
+    const salt = await bycrypt.genSalt();
+    const hash = await bycrypt.hash(password, salt)
+    this.set('password', hash)
+    next()
+  } catch (error) {
+    next(error as Error)
+  }
+})
+
 type Hub = InferSchemaType<typeof hubSchema>;
+
 
 export default model<Hub>("Hub", hubSchema)
 
@@ -105,7 +100,7 @@ export function validateHub(hub: Hub) {
     name: Joi.string().min(3).required(),
     username: Joi.string().min(3).required(),
     email: Joi.string().email(),
-    password: Joi.string().min(4).required(),
+    password: Joi.string().min(4),
     instagram: Joi.string(),
     twitter: Joi.string(),
     tiktok: Joi.string(),

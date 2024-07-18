@@ -1,10 +1,14 @@
 import express from "express";
-import { createHub, getHub } from "../Controllers/hub";
+import { createHub, getHub, getHubs, updateHub, deleteHub } from "../Controllers/hub";
 
 const router = express.Router();
 
 //routes
 router.post("/", createHub)
-router.get("/", getHub)
+router.put("/:id", updateHub)
+router.delete("/:id", deleteHub)
+
+router.get("/:id", getHub)
+router.get("/", getHubs)
 
 export default router
