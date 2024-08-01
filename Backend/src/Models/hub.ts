@@ -1,5 +1,5 @@
 import { InferSchemaType, model, Schema } from "mongoose";
-import { isEmail } from "validator";
+// import { isEmail } from "validator";
 import Joi from 'joi';
 import bycrypt from 'bcrypt';
 
@@ -8,6 +8,7 @@ const hubSchema = new Schema({
     type: String,
     required: [true, "Please enter a name"],
     minlength: [3, "Minimum name length is 3"],
+    unique: true
   },
   username: {
     type: String,
@@ -15,14 +16,15 @@ const hubSchema = new Schema({
     minlength: [3, "Minimum name length is 3"],
     unique: true
   },
-  email: {
-    type: String,
-    lowercase: true,
-    validate: [ isEmail, "Please enter a valid email"]
-  },
+  // email: {
+  //   type: String,
+  //   lowercase: true,
+  //   validate: [ isEmail, "Please enter a valid email"]
+  // },
   password: {
     type: String,
-    minlength: [4, "Password must have a minimum length of 4 letters"]
+    minlength: [4, "Password must have a minimum length of 4 letters"],
+    select: false
   },
   instagram: {
     type: String
@@ -51,6 +53,17 @@ const hubSchema = new Schema({
     type: String,
     required: [true, "Please enter address"]
   },
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true
+    },
+    coordinates: {
+      type: [Number],
+      required: true
+    }
+  },
   state: {
     type: String,
     required: [true, "Please enter state"]
@@ -71,8 +84,14 @@ const hubSchema = new Schema({
   ],
   notice: {
     type: String
+  },
+  hubClaimed: {
+    type: Boolean,
+    default: false
   }
 }, {timestamps: true});
+
+hubSchema.index({location: "2dsphere"})
 
 hubSchema.pre("save", async function(next) {
   try {
@@ -99,7 +118,7 @@ export function validateHub(hub: Hub) {
   const schema = Joi.object({
     name: Joi.string().min(3).required(),
     username: Joi.string().min(3).required(),
-    email: Joi.string().email(),
+    // email: Joi.string().email(),
     password: Joi.string().min(4),
     instagram: Joi.string(),
     twitter: Joi.string(),

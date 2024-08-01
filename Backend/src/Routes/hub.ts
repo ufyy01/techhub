@@ -1,11 +1,14 @@
 import express from "express";
-import { createHub, getHub, getHubs, updateHub, deleteHub } from "../Controllers/hub";
+import { createHub, getHub, getHubs, updateHub, deleteHub, hubsNearMe, claimHub } from "../Controllers/hub";
 
 const router = express.Router();
 
 //routes
+router.get("/near-me", hubsNearMe)
+router.post("/claim", claimHub)
+
 router.post("/", createHub)
-router.put("/:id", updateHub)
+router.patch("/:id", updateHub)
 router.delete("/:id", deleteHub)
 
 router.get("/:id", getHub)
