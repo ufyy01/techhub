@@ -1,5 +1,5 @@
 import { InferSchemaType, model, Schema } from "mongoose";
-// import { isEmail } from "validator";
+import { isEmail } from "validator";
 import Joi from 'joi';
 import bycrypt from 'bcrypt';
 
@@ -16,11 +16,11 @@ const hubSchema = new Schema({
     minlength: [3, "Minimum name length is 3"],
     unique: true
   },
-  // email: {
-  //   type: String,
-  //   lowercase: true,
-  //   validate: [ isEmail, "Please enter a valid email"]
-  // },
+  email: {
+    type: String,
+    lowercase: true,
+    validate: [ isEmail, "Please enter a valid email"]
+  },
   password: {
     type: String,
     minlength: [4, "Password must have a minimum length of 4 letters"],
@@ -109,7 +109,7 @@ hubSchema.pre("save", async function(next) {
   }
 })
 
-type Hub = InferSchemaType<typeof hubSchema>;
+export type Hub = InferSchemaType<typeof hubSchema>;
 
 
 export default model<Hub>("Hub", hubSchema)
@@ -118,7 +118,7 @@ export function validateHub(hub: Hub) {
   const schema = Joi.object({
     name: Joi.string().min(3).required(),
     username: Joi.string().min(3).required(),
-    // email: Joi.string().email(),
+    email: Joi.string().email(),
     password: Joi.string().min(4),
     instagram: Joi.string(),
     twitter: Joi.string(),

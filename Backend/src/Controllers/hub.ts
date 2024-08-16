@@ -3,13 +3,16 @@ import HubModel from '../Models/hub'
 import { RequestHandler } from "express"
 import { getLocation } from "../util/location"
 import { SortOrder } from "mongoose"
+import { transporter } from "../services/mail"
+import "dotenv/config"
+import { verfyEmail } from "../services/emailCheck"
 
 //create hub & sign up
 export const createHub: RequestHandler = async (req, res) => {
   const {error} = validateHub(req.body)
   if (error) return res.status(400).send(error);
 
-  const { name, username, password, instagram, twitter, tiktok, website, phone, images, description, address, state, schedule, notice} = req.body
+  const { name, username, password, email, instagram, twitter, tiktok, website, phone, images, description, address, state, schedule, notice} = req.body
 
   let geoLocation;
 
@@ -30,7 +33,7 @@ export const createHub: RequestHandler = async (req, res) => {
       coordinates: [lng, lat]
     }
 
-    await HubModel.create({ name, username, password, instagram, twitter, tiktok, website, phone, images, description, address, state, schedule, notice, location})
+    await HubModel.create({ name, username, email, password, instagram, twitter, tiktok, website, phone, images, description, address, state, schedule, notice, location})
 
     res.status(201).json({message:"Hub created successfully"})
   } catch (error) {
@@ -40,6 +43,75 @@ export const createHub: RequestHandler = async (req, res) => {
       res.status(500).json({ message: "An unknown error occurred" });
     }
   }
+}
+
+//get hub close to me
+export const hubsNearMe: RequestHandler = async (req, res) => {
+  try {
+    const {lng, lat} = req.query
+
+    if(typeof lng !== "string" || typeof lat !== "string" ) throw new Error("Coordinates must be a string")
+
+    const hubsNear = await HubModel.aggregate([ 
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [parseFloat(lng), parseFloat(lat)]
+        },
+        key: "location",
+        maxDistance: 1000 * 15,
+        distanceField: "dist.calculated",
+        spherical: true
+      }
+    }
+  ])
+    res.status(200).json({success: true, message: "Hub near you fetched successfully", data: hubsNear})
+
+  } catch(error) {
+    if (error instanceof Error) {
+      res.status(400).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: "An unknown error occurred" });
+    }
+  }
+}
+
+//Post request to claimHub
+export const claimHub: RequestHandler = async (req, res) => {
+
+  const { id } = req.params
+  const { email } = req.body
+
+  try {
+    const hub = await HubModel.findById(id)
+    if (!hub) throw new Error("Hub does not exist")
+    
+    if(!verfyEmail(email,hub)) throw new Error("Please enter an official email")
+    
+      const mailOptions = {
+        from: process.env.MAIL_USERNAME,
+        to: email,
+        subject: `Request to claim ${hub.name}`,
+        text: 'That was easy!'
+      };
+    
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          return res.status(400).json({ status: "error", message: "Error sending message, please try again later.", info: error });
+      } else {
+          return res.json({ status: "success", message: info.response });
+      }
+      });
+
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(400).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: "An unknown error occurred" });
+    }
+  }
+  
 }
 
 //Update hub
@@ -145,40 +217,4 @@ export const getHubs: RequestHandler = async (req, res) => {
       res.status(500).json({ message: "An unknown error occurred" });
     }
   }
-}
-
-//get hub close to me
-export const hubsNearMe: RequestHandler = async (req, res) => {
-  try {
-    const {lng, lat} = req.query
-
-    if(typeof lng !== "string" || typeof lat !== "string" ) throw new Error("Coordinates must be a string")
-
-    const hubsNear = await HubModel.aggregate([ 
-    {
-      $geoNear: {
-        near: {
-          type: 'Point',
-          coordinates: [parseFloat(lng), parseFloat(lat)]
-        },
-        key: "location",
-        maxDistance: 1000 * 1609,
-        distanceField: "dist.calculated",
-        spherical: true
-      }
-    }
-  ])
-    res.send(200).json({success: true, message: "Hub near you fetched successfully", data: hubsNear})
-
-  } catch(error) {
-    if (error instanceof Error) {
-      res.status(400).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "An unknown error occurred" });
-    }
-  }
-}
-
-export const claimHub: RequestHandler = async (req, res) => {
-  res.send('Claimed')
 }

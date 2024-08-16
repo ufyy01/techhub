@@ -5,7 +5,7 @@ const router = express.Router();
 
 //routes
 router.get("/near-me", hubsNearMe)
-router.post("/claim", claimHub)
+router.post("/claim/:id", claimHub)
 
 router.post("/", createHub)
 router.patch("/:id", updateHub)
