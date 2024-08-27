@@ -20,8 +20,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import Link from 'next/link';
+import { Button } from './ui/button';
 
-interface Hubs {
+export interface Hub {
   _id: string;
   name: string;
   username: string;
@@ -29,20 +31,7 @@ interface Hubs {
   images: [string];
   address: string;
   state: string;
-  schedule: [
-    {
-      day:
-        | 'Monday'
-        | 'Tuesday'
-        | 'Wednesday'
-        | 'Thursday'
-        | 'Friday'
-        | 'Saturday'
-        | 'Sunday';
-      openingTime: string;
-      closingTime: string;
-    },
-  ];
+  schedule: [string];
   dist: {
     calculated: number;
   };
@@ -54,28 +43,38 @@ const Nearme = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const getLocation = async (position: any) => {
-      const lng = position.coords.longitude;
-      const lat = position.coords.latitude;
+    const fetchHubsNearMe = async () => {
+      try {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              const lng = position.coords.longitude;
+              const lat = position.coords.latitude;
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_PROXY_URL}/near-me?lng=${lng}&lat=${lat}`
-      );
+              const res = await fetch(`/api/hub/near-me?lng=${lng}&lat=${lat}`);
 
-      const data = await res.json();
+              if (!res.ok) {
+                throw new Error('Failed to fetch hubs');
+              }
 
-      setHubsNearMe(data.data);
+              const data = await res.json();
+              setHubsNearMe(data.data || []);
+            },
+            (error) => {
+              setError(error.message);
+            }
+          );
+        } else {
+          console.error('Geolocation is not supported by this device.');
+          setError('Geolocation is not supported by this device.');
+        }
+      } catch (err) {
+        console.error('An unexpected error occurred:', err);
+        setError('An unexpected error occurred.');
+      }
     };
 
-    const handleError = (error: any) => {
-      setError(error.message);
-    };
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(getLocation, handleError);
-    } else {
-      console.error('Geolocation is not supported by this device.');
-    }
+    fetchHubsNearMe();
   }, []);
 
   return (
@@ -83,7 +82,7 @@ const Nearme = () => {
       <h1>Welcome!</h1>
       <p>See hubs near you</p>
 
-      {hubsNearMe && hubsNearMe.length > 0 ? (
+      {/* {hubsNearMe && hubsNearMe.length > 0 ? (
         <Carousel className="w-6/12 h-2/5 mx-auto">
           <CarouselContent>
             {hubsNearMe.map((hub: Hubs) => (
@@ -123,7 +122,15 @@ const Nearme = () => {
             Kindly allow access to your location to find amazing hubs near you!
           </AlertDescription>
         </Alert>
-      )}
+      )} */}
+
+      {hubsNearMe}
+
+      <div>
+        <Button size="lg">
+          <Link href="/hubs"></Link>Explore Hubs
+        </Button>
+      </div>
     </div>
   );
 };

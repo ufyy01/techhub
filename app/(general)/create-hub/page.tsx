@@ -16,6 +16,7 @@ import { Card } from '@/components/ui/card';
 import Photocard from '@/components/photocard';
 import LoadingButton from '@/components/loadingButton';
 import { uploadPhoto } from '@/action/uploadActions';
+import { useRouter } from 'next/navigation';
 
 const playfair = Playfair_Display({
   weight: '700',
@@ -24,6 +25,8 @@ const playfair = Playfair_Display({
 });
 
 const Page = () => {
+  const router = useRouter();
+
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -42,9 +45,8 @@ const Page = () => {
   const [openTime, setOpenTime] = useState('');
   const [closingTime, setClosingTime] = useState('');
   const [schedule, setSchedule] = useState<string[]>([]);
+  const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
-
-  // const createForm = useRef<HTMLFormElement>(null);
 
   const handleAddSchedule = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -114,29 +116,45 @@ const Page = () => {
 
   const formData = new FormData();
 
-  formData.append('name', name);
-  formData.append('username', username);
-  formData.append('email', email);
-  formData.append('twitter', twitter);
-  formData.append('instagram', instagram);
-  formData.append('tiktok', tiktok);
-  formData.append('website', website);
-  formData.append('address', address);
-  formData.append('phone', phone);
-  formData.append('state', state);
-  formData.append('description', description);
-  formData.append('password', password);
-  formData.append('confirmPassword', confirmPassword);
   images.map((image) => {
     formData.append(`images`, image);
   });
-  schedule.map((day) => {
-    formData.append(`schedule`, day);
-  });
 
-  const handleAddForm = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const res = await uploadPhoto(formData);
+  const handleAddForm = async () => {
+    const cloudImages = await uploadPhoto(formData);
+
+    const hub = {
+      name,
+      username,
+      email,
+      twitter,
+      instagram,
+      tiktok,
+      website,
+      address,
+      phone,
+      state,
+      description,
+      password,
+      confirmPassword,
+      schedule,
+      notice,
+      images: cloudImages.newPhotos,
+    };
+    // console.log(hub);
+    if (cloudImages.msg === 'Upload successfull') {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_PROXY_URL}/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(hub),
+      });
+
+      console.log(res);
+
+      if (res.status === 200) {
+        router.refresh();
+      }
+    }
   };
 
   return (
@@ -146,7 +164,7 @@ const Page = () => {
           <h1 className={`${playfair.className} text-3xl mb-2`}>Add Hub</h1>
           <p>Add your hub</p>
         </div>
-        <form className="space-y-8" onSubmit={handleAddForm}>
+        <form className="space-y-8" action={handleAddForm}>
           <div className="border p-4 rounded-xl relative space-y-4">
             <p className="absolute bg-white -top-3 right-4 px-2">Hub Details</p>
 
@@ -467,6 +485,19 @@ const Page = () => {
                   )}
                 </div>
               </div>
+            </div>
+
+            <div>
+              <label>
+                <span>Hub Notice</span>
+                <Textarea
+                  placeholder="Pass important notice here..."
+                  value={notice}
+                  onChange={(e) => {
+                    setNotice(e.target.value);
+                  }}
+                />
+              </label>
             </div>
           </div>
           <div className="border p-4 rounded-xl relative space-y-4">
