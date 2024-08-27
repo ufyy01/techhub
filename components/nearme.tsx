@@ -51,7 +51,7 @@ const Nearme = () => {
               const lng = position.coords.longitude;
               const lat = position.coords.latitude;
 
-              const res = await fetch(`/api/hub/near-me?lng=${lng}&lat=${lat}`);
+              const res = await fetch(`/api/hub`);
 
               if (!res.ok) {
                 throw new Error('Failed to fetch hubs');
@@ -125,12 +125,6 @@ const Nearme = () => {
       )} */}
 
       {hubsNearMe}
-
-      <div>
-        <Button size="lg">
-          <Link href="/hubs"></Link>Explore Hubs
-        </Button>
-      </div>
     </div>
   );
 };

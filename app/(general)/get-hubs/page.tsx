@@ -9,24 +9,25 @@ import {
 } from '@/components/ui/card';
 import Image from 'next/image';
 
-// async function getHubs() {
-//   const res = await fetch('/api/hub/');
+async function getHubs() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_PROXY_URL}/hub`);
 
-//   if (!res.ok) {
-//     throw new Error('Failed to fetch hubs');
-//   }
+  if (!res.ok) {
+    throw new Error('Failed to fetch hubs');
+  }
 
-//   const data = await res.json();
+  const data = await res.json();
 
-//   return data.data as Hub[];
-// }
+  return data.data as Hub[];
+}
 
 const Page = async () => {
-  // const hubs = await getHubs();
+  const hubs = await getHubs();
 
   return (
     <>
       <p>Hello</p>
+      {hubs}
       {/* {hubs.map((hub) => (
         <div key={hub._id}>
           <Card>
