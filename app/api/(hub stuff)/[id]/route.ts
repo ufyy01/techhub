@@ -50,7 +50,7 @@ export const PATCH = async (request: Request, context: { params: any }) => {
 
     if (!body) {
       return NextResponse.json(
-        JSON.stringify({ message: 'update Hub information' }),
+        { message: 'update Hub information' },
         { status: 400 }
       );
     }
@@ -61,9 +61,9 @@ export const PATCH = async (request: Request, context: { params: any }) => {
     let geoLocation = await getLocation(body.address);
     if (!geoLocation) {
       return NextResponse.json(
-        JSON.stringify({
+        {
           message: 'Location not found, Please enter a valid location',
-        }),
+        },
         { status: 400 }
       );
     }
@@ -83,7 +83,7 @@ export const PATCH = async (request: Request, context: { params: any }) => {
     await newhub!.save();
 
     return NextResponse.json(
-      JSON.stringify({ message: 'Hub updated successfully' }),
+      { message: 'Hub updated successfully' },
       { status: 200 }
     );
   } catch (error: any) {
@@ -103,7 +103,7 @@ export const DELETE = async (request: Request, context: { params: any }) => {
     if (!hub) throw new Error('Hub does not exist');
 
     return NextResponse.json(
-      JSON.stringify({ message: 'Hub deleted successfully' }),
+      { message: 'Hub deleted successfully' },
       { status: 200 }
     );
   } catch (error: any) {
@@ -122,7 +122,7 @@ export const GET = async (request: Request, context: { params: any }) => {
     if (!hub) throw new Error('Hub does not exist');
 
     return NextResponse.json(
-      JSON.stringify({ message: 'success', data: hub }),
+      { message: 'success', data: hub },
       { status: 200 }
     );
   } catch (error: any) {

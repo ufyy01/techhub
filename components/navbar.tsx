@@ -13,7 +13,7 @@ const playfair = Playfair_Display({
 
 const Navbar = () => {
   return (
-    <header className="sticky top-0 w-11/12 mx-auto z-50 bg-slate-500 mb-8">
+    <header className="sticky top-0 w-11/12 mx-auto z-50 mb-8">
       <nav className="flex justify-between items-center py-3 h-20 md:h-24 lg:h-32 gap-5 px-4 glass z-50 rounded-full">
         <div>
           <Image src={Logo} alt="logo" height={120} width={120} priority />

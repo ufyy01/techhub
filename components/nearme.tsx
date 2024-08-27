@@ -1,8 +1,4 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-
 import {
   Carousel,
   CarouselContent,
@@ -11,7 +7,6 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import Image from 'next/image';
-
 import {
   Card,
   CardContent,
@@ -28,103 +23,101 @@ export interface Hub {
   name: string;
   username: string;
   password: string;
-  images: [string];
+  images: Array<{
+    public_id: string;
+    secure_url: string;
+  }>;
   address: string;
   state: string;
-  schedule: [string];
+  schedule: string[];
   dist: {
     calculated: number;
   };
-  hubClaimed: false;
+  hubClaimed: boolean;
 }
 
-const Nearme = () => {
-  const [hubsNearMe, setHubsNearMe] = useState([]);
-  const [error, setError] = useState('');
+const fetchHubsNearMe = async (): Promise<Hub[]> => {
+  const getLocation = async (position: GeolocationPosition): Promise<Hub[]> => {
+    const lng = position.coords.longitude;
+    const lat = position.coords.latitude;
 
-  useEffect(() => {
-    const fetchHubsNearMe = async () => {
-      try {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            async (position) => {
-              const lng = position.coords.longitude;
-              const lat = position.coords.latitude;
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_PROXY_URL}/near-me?lng=${lng}&lat=${lat}`
+    );
 
-              const res = await fetch(`/api/hub`);
+    if (!res.ok) {
+      throw new Error('Failed to fetch hubs');
+    }
 
-              if (!res.ok) {
-                throw new Error('Failed to fetch hubs');
-              }
+    const data = await res.json();
+    return data as Hub[];
+  };
 
-              const data = await res.json();
-              setHubsNearMe(data.data || []);
-            },
-            (error) => {
-              setError(error.message);
-            }
-          );
-        } else {
-          console.error('Geolocation is not supported by this device.');
-          setError('Geolocation is not supported by this device.');
+  const handleError = (error: GeolocationPositionError): Hub[] => {
+    console.error('Error getting location', error);
+    return [];
+  };
+
+  return new Promise<Hub[]>((resolve, reject) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const hubs = await getLocation(position);
+            resolve(hubs);
+          } catch (error) {
+            reject(error);
+          }
+        },
+        (error) => {
+          const hubs = handleError(error);
+          resolve(hubs);
         }
-      } catch (err) {
-        console.error('An unexpected error occurred:', err);
-        setError('An unexpected error occurred.');
-      }
-    };
+      );
+    } else {
+      console.error('Geolocation is not supported by this device.');
+      resolve([]);
+    }
+  });
+};
 
-    fetchHubsNearMe();
-  }, []);
+const Nearme = async () => {
+  const hubsNearMe = await fetchHubsNearMe();
 
   return (
     <div>
       <h1>Welcome!</h1>
       <p>See hubs near you</p>
-
-      {/* {hubsNearMe && hubsNearMe.length > 0 ? (
-        <Carousel className="w-6/12 h-2/5 mx-auto">
-          <CarouselContent>
-            {hubsNearMe.map((hub: Hubs) => (
-              <CarouselItem key={hub._id}>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Card Title</CardTitle>
-                    <CardDescription>Card Description</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div>
-                      <Image
-                        src={hub.images[0]}
-                        alt="hub"
-                        width={500}
-                        height={500}
-                      />
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <p>Card Footer</p>
-                  </CardFooter>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
-      ) : (
+      <Carousel className="w-6/12 h-2/5 mx-auto">
+        <CarouselContent>
+          {hubsNearMe.map((hub: Hub) => (
+            <CarouselItem key={hub._id}>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Card Title</CardTitle>
+                  <CardDescription>Card Description</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div></div>
+                </CardContent>
+                <CardFooter>
+                  <p>Card Footer</p>
+                </CardFooter>
+              </Card>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+      {hubsNearMe.length === 0 && (
         <Alert className="w-6/12">
           <AlertTitle className="text-xl">Heads up!</AlertTitle>
-          <AlertDescription className="text-red-600 italic">
-            {error}
-          </AlertDescription>
           <AlertDescription className="text-base">
             Kindly allow access to your location to find amazing hubs near you!
           </AlertDescription>
         </Alert>
-      )} */}
-
-      {hubsNearMe}
+      )}
     </div>
   );
 };

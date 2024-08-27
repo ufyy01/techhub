@@ -21,9 +21,9 @@ export const GET = async (request: Request) => {
 
     if (!['asc', 'desc'].includes(order)) {
       return NextResponse.json(
-        JSON.stringify({
+        {
           message: "Invalid order value. Must be 'asc' or 'desc'.",
-        }),
+        },
         { status: 400 }
       );
     }
@@ -41,7 +41,7 @@ export const GET = async (request: Request) => {
     const totalStores = await Hub.countDocuments();
 
     return NextResponse.json(
-      JSON.stringify({
+      {
         message: 'success',
         data: hubs,
         pagination: {
@@ -50,7 +50,7 @@ export const GET = async (request: Request) => {
           limit,
           pages: Math.ceil(totalStores / limit),
         },
-      }),
+      },
       { status: 200 }
     );
   } catch (error: any) {
@@ -68,7 +68,7 @@ export const POST = async (request: Request) => {
 
     if (!body) {
       return NextResponse.json(
-        JSON.stringify({ message: 'No data provided' }),
+        { message: 'No data provided' },
         { status: 400 }
       );
     }
@@ -76,9 +76,9 @@ export const POST = async (request: Request) => {
     const hub = await Hub.findOne({ name: body.name });
     if (hub) {
       return NextResponse.json(
-        JSON.stringify({
+        {
           message: 'Hub with this name already exists',
-        }),
+        },
         { status: 400 }
       );
     }
@@ -86,9 +86,9 @@ export const POST = async (request: Request) => {
     const hubEmail = await Hub.findOne({ name: body.email });
     if (hubEmail) {
       return NextResponse.json(
-        JSON.stringify({
+        {
           message: 'Hub with this email already exists',
-        }),
+        },
         { status: 400 }
       );
     }
@@ -96,9 +96,9 @@ export const POST = async (request: Request) => {
     let geoLocation = await getLocation(body.address);
     if (!geoLocation) {
       return NextResponse.json(
-        JSON.stringify({
+        {
           message: 'Location not found, Please enter a valid location',
-        }),
+        },
         { status: 400 }
       );
     }
@@ -113,7 +113,7 @@ export const POST = async (request: Request) => {
     await Hub.create({ ...body, location });
 
     return NextResponse.json(
-      JSON.stringify({ message: 'Hub created successfully' }),
+      { message: 'Hub created successfully' },
       { status: 200 }
     );
   } catch (error: any) {

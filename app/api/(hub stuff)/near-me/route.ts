@@ -29,10 +29,10 @@ export const GET = async (request: Request) => {
       },
     ]);
     return NextResponse.json(
-      JSON.stringify({
+      {
         message: 'Hub near you fetched successfully',
         data: hubsNear,
-      }),
+      },
       { status: 200 }
     );
   } catch (error: any) {
