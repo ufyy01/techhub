@@ -12,12 +12,15 @@ export const GET = async (request: Request) => {
     let order = searchParams.get('order');
     let page = parseInt(searchParams.get('page') || '1');
     let limit = parseInt(searchParams.get('limit') || '10');
-    let searchKeywords = searchParams.get('search');
+    let keywords = searchParams.get('search');
+    let letter = searchParams.get('letter');
 
     sort = sort || 'name';
     order = order || 'asc';
     page = page ? page : 1;
     limit = limit ? limit : 10;
+    keywords = keywords ? keywords.toLowerCase() : '';
+    letter = letter ? letter.toString() : '';
 
     if (!['asc', 'desc'].includes(order)) {
       return NextResponse.json(
@@ -35,10 +38,22 @@ export const GET = async (request: Request) => {
     const sortObj: { [key: string]: SortOrder } = {};
     sortObj[sort] = order === 'asc' ? 1 : -1;
 
-    const hubs = await Hub.find().sort(sortObj).skip(offset).limit(limit);
+    let query = {};
+    if (keywords) {
+      query = { name: { $regex: keywords, $options: 'i' } };
+    }
+    if (letter) {
+      if (letter === '#') {
+        query = { name: { $regex: '^[0-9]', $options: 'i' } };
+      } else {
+        query = { name: { $regex: `^${letter}`, $options: 'i' } };
+      }
+    }
+
+    const hubs = await Hub.find(query).sort(sortObj).skip(offset).limit(limit);
     if (!hubs) throw new Error("Can't load hubs");
 
-    const totalStores = await Hub.countDocuments();
+    const totalStores = await Hub.countDocuments(query);
 
     return NextResponse.json(
       {

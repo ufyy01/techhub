@@ -75,6 +75,11 @@ const config = {
       boxShadow: {
         mid: '-5px -5px 0 5px rgb(0,0,0)',
       },
+      flex: {
+        lg: '0 0 calc(95% / 3)',
+        md: '0 0 calc(95% / 2)',
+        sm: '0 0 100%',
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],

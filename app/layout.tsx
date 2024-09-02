@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Source_Sans_3 } from 'next/font/google';
 import './globals.css';
+import { ThemeProvider } from '@/components/theme-provider';
 
 const source = Source_Sans_3({
   weight: '400',
@@ -19,8 +20,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={source.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={source.className}>
+        <ThemeProvider attribute="class" defaultTheme="sytem" enableSystem>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
