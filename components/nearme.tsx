@@ -18,7 +18,15 @@ import {
 import Link from 'next/link';
 import { Button } from './ui/button';
 
-export interface Hub {
+export interface Hubs {
+  data: Hub[];
+  pagination: {
+    page: number;
+    pages: number;
+  };
+}
+
+interface Hub {
   _id: string;
   name: string;
   username: string;
@@ -36,8 +44,8 @@ export interface Hub {
   hubClaimed: boolean;
 }
 
-const fetchHubsNearMe = async (): Promise<Hub[]> => {
-  const getLocation = async (position: GeolocationPosition): Promise<Hub[]> => {
+const fetchHubsNearMe = async (): Promise<Hubs> => {
+  const getLocation = async (position: GeolocationPosition): Promise<Hubs> => {
     const lng = position.coords.longitude;
     const lat = position.coords.latitude;
 
@@ -50,15 +58,21 @@ const fetchHubsNearMe = async (): Promise<Hub[]> => {
     }
 
     const data = await res.json();
-    return data as Hub[];
+    return data as Hubs;
   };
 
-  const handleError = (error: GeolocationPositionError): Hub[] => {
+  const handleError = (error: GeolocationPositionError): Hubs => {
     console.error('Error getting location', error);
-    return [];
+    return {
+      data: [],
+      pagination: {
+        page: 0,
+        pages: 0,
+      },
+    };
   };
 
-  return new Promise<Hub[]>((resolve, reject) => {
+  return new Promise<Hubs>((resolve, reject) => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -76,7 +90,13 @@ const fetchHubsNearMe = async (): Promise<Hub[]> => {
       );
     } else {
       console.error('Geolocation is not supported by this device.');
-      resolve([]);
+      resolve({
+        data: [],
+        pagination: {
+          page: 0,
+          pages: 0,
+        },
+      });
     }
   });
 };
@@ -90,7 +110,7 @@ const Nearme = async () => {
       <p>See hubs near you</p>
       <Carousel className="w-6/12 h-2/5 mx-auto">
         <CarouselContent>
-          {hubsNearMe.map((hub: Hub) => (
+          {hubsNearMe.data.map((hub: Hub) => (
             <CarouselItem key={hub._id}>
               <Card>
                 <CardHeader>
@@ -110,7 +130,7 @@ const Nearme = async () => {
         <CarouselPrevious />
         <CarouselNext />
       </Carousel>
-      {hubsNearMe.length === 0 && (
+      {hubsNearMe.data.length === 0 && (
         <Alert className="w-6/12">
           <AlertTitle className="text-xl">Heads up!</AlertTitle>
           <AlertDescription className="text-base">

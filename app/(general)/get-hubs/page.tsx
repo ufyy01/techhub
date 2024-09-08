@@ -1,33 +1,32 @@
-import { Hub } from '@/components/nearme';
+import { Hubs } from '@/components/nearme';
 import Search from '@/components/search';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { MapPin } from 'lucide-react';
-import { Playfair_Display } from 'next/font/google';
 import Image from 'next/image';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
-import { Button } from '@/components/ui/button';
+import Letters from '@/components/letters';
+import ClearFilter from '@/components/clearFilter';
+import { Playfair_Display } from 'next/font/google';
+import Pagination from '@/components/custom-pagination';
 
 const playfair = Playfair_Display({
   weight: '800',
   subsets: ['latin'],
   style: 'normal',
 });
-async function getHubs(query?: any): Promise<Hub[]> {
+async function getHubs(query?: any): Promise<Hubs> {
   const base = `${process.env.NEXT_PUBLIC_PROXY_URL}/hub`;
 
   const url = () => {
     if (query) {
-      return `${base}?search=${query}`;
+      if (query.search) {
+        return `${base}?search=${query.search}`;
+      } else if (query.letter) {
+        return `${base}?letter=${query.letter}`;
+      } else if (query.page) {
+        return `${base}?page=${query.page}`;
+      }
     }
     return base;
   };
@@ -38,62 +37,38 @@ async function getHubs(query?: any): Promise<Hub[]> {
     throw new Error('Failed to fetch hubs');
   }
   const data = await res.json();
-
-  return data.data as Hub[];
+  return data as Hubs;
 }
 
 const Page = async ({
   searchParams,
 }: {
-  searchParams?: { search?: string };
+  searchParams?: { search?: string; letter?: string; page?: number };
 }) => {
-  const search = searchParams?.search || '';
+  const query = {
+    search: searchParams?.search || '',
+    letter: searchParams?.letter || '',
+    page: searchParams?.page || '',
+  };
 
-  const hubs = await getHubs(search);
-
-  const letters = [
-    'A',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'H',
-    'I',
-    'J',
-    'K',
-    'L',
-    'M',
-    'N',
-    'O',
-    'P',
-    'Q',
-    'R',
-    'S',
-    'T',
-    'U',
-    'V',
-    'W',
-    'X',
-    'Y',
-    'Z',
-    '#',
-  ];
+  const hubs = await getHubs(query);
 
   return (
     <>
       <Card className="rounded-2xl p-4 w-11/12 mx-auto my-6 ">
-        <div className="my-5">
-          <div>
+        <div className="flex my-5">
+          <div className="lg:ms-5">
+            <ClearFilter />
+          </div>
+          <div className="ms-auto w-full">
             <Search />
           </div>
         </div>
         <div className="flex">
-          <div className="flex flex-wrap gap-5 w-full md:pl-5 mb-10">
-            {hubs.map((hub, index) => (
+          <div className="flex flex-wrap gap-2 w-full h-fit md:pl-5">
+            {hubs.data.map((hub, index) => (
               <Card
-                className="flex-sm md:flex-md lg:flex-lg rounded-xl rounded-br-[70px] border-none outline-none shadow-none overflow-hidden h-[300px]"
+                className="flex-sm md:flex-md xl:flex-lg rounded-xl rounded-br-[70px] border-none outline-none shadow-none overflow-hidden h-[300px]"
                 key={hub._id}
               >
                 <div className="relative">
@@ -136,50 +111,12 @@ const Page = async ({
             ))}
           </div>
 
-          <div className="w-[15px] mr-5 space-y-1 ms-2">
-            {letters.map((letter, index) => (
-              <Button
-                key={index}
-                className={cn(
-                  'text-xs md:text-sm font-bold',
-                  index === 0 && 'border-b-2 border-black dark:border-white'
-                )}
-                variant="link"
-                // href={`?search=${letter}`}
-              >
-                {letter}
-              </Button>
-            ))}
-          </div>
+          <Letters />
         </div>
-
-        {/* <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <Button>
-                <PaginationPrevious href="#" />
-              </Button>
-            </PaginationItem>
-            <PaginationItem>
-              <Button>
-                <PaginationLink href="#">1</PaginationLink>
-              </Button>
-            </PaginationItem>
-            <PaginationItem>
-              <Button>
-                <PaginationEllipsis />
-              </Button>
-            </PaginationItem>
-            <PaginationItem>
-              <Button>
-                <PaginationNext href="#" />
-              </Button>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination> */}
+        {hubs.pagination && <Pagination pageCount={hubs.pagination.pages} />}
       </Card>
 
-      {hubs.length === 0 && <p>Error loading Hubs. Kindly try again</p>}
+      {hubs.data.length === 0 && <p>Error loading Hubs. Kindly try again</p>}
     </>
   );
 };

@@ -71,3 +71,7 @@
 .glass {
   @apply bg-white bg-opacity-10 backdrop-filter backdrop-blur-xl border-solid border border-white border-opacity-20;
 }
+
+.pag-btn {
+  @apply bg-black dark:bg-white w-[30px] h-[30px] flex justify-center items-center rounded-xl;
+}
