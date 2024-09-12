@@ -1,7 +1,7 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,6 @@ import { Card } from '@/components/ui/card';
 import Photocard from '@/components/photocard';
 import LoadingButton from '@/components/loadingButton';
 import { uploadPhoto } from '@/action/uploadActions';
-import { useRouter } from 'next/navigation';
 
 const playfair = Playfair_Display({
   weight: '700',
@@ -25,10 +24,9 @@ const playfair = Playfair_Display({
 });
 
 const Page = () => {
-  const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
 
   const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [twitter, setTwitter] = useState('');
   const [instagram, setInstagram] = useState('');
@@ -38,8 +36,6 @@ const Page = () => {
   const [phone, setPhone] = useState('');
   const [state, setState] = useState('');
   const [description, setDescription] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [images, setImages] = useState<any[]>([]);
   const [dayOpen, setDayOpen] = useState('');
   const [openTime, setOpenTime] = useState('');
@@ -47,6 +43,8 @@ const Page = () => {
   const [schedule, setSchedule] = useState<string[]>([]);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successfull, setSuccessfull] = useState('');
 
   const handleAddSchedule = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -125,7 +123,6 @@ const Page = () => {
 
     const hub = {
       name,
-      username,
       email,
       twitter,
       instagram,
@@ -135,24 +132,39 @@ const Page = () => {
       phone,
       state,
       description,
-      password,
-      confirmPassword,
       schedule,
       notice,
       images: cloudImages.newPhotos,
     };
-    // console.log(hub);
+
     if (cloudImages.msg === 'Upload successfull') {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_PROXY_URL}/`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_PROXY_URL}/hub`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(hub),
       });
 
-      console.log(res);
+      const data = await res.json();
 
       if (res.status === 200) {
-        router.refresh();
+        setName('');
+        setEmail('');
+        setTwitter('');
+        setInstagram('');
+        setTiktok('');
+        setWebsite('');
+        setAddress('');
+        setPhone('');
+        setState('');
+        setDescription('');
+        setImages([]);
+        setSchedule([]);
+        setNotice('');
+        setError('');
+        setErrorMessage('');
+        setSuccessfull(data.message);
+      } else {
+        setErrorMessage(data.message);
       }
     }
   };
@@ -164,14 +176,17 @@ const Page = () => {
           <h1 className={`${playfair.className} text-3xl mb-2`}>Add Hub</h1>
           <p>Add your hub</p>
         </div>
-        <form className="space-y-8" action={handleAddForm}>
-          <div className="border p-4 rounded-xl relative space-y-4">
-            <p className="absolute bg-white -top-3 right-4 px-2">Hub Details</p>
+        <form className="space-y-8" action={handleAddForm} ref={formRef}>
+          <div className="border p-4 rounded-xl relative space-y-4 dark:border-white">
+            <p className="absolute bg-white dark:bg-black -top-3 right-4 px-2">
+              Hub Details
+            </p>
 
             <div>
               <label>
                 <span>Hub Name</span>
                 <Input
+                  className="dark:border-white"
                   name="name"
                   required
                   type="text"
@@ -185,23 +200,9 @@ const Page = () => {
 
             <div>
               <label>
-                <span>Username</span>
-                <Input
-                  name="username"
-                  required
-                  type="text"
-                  value={username}
-                  onChange={(e) => {
-                    setUsername(e.target.value);
-                  }}
-                />
-              </label>
-            </div>
-
-            <div>
-              <label>
                 <span>Official Email</span>
                 <Input
+                  className="dark:border-white"
                   name=""
                   required
                   type="email"
@@ -217,6 +218,7 @@ const Page = () => {
               <label>
                 <span>Hub Address</span>
                 <Input
+                  className="dark:border-white"
                   name=""
                   required
                   type="text"
@@ -233,6 +235,7 @@ const Page = () => {
                 <label>
                   <span>State</span>
                   <Input
+                    className="dark:border-white"
                     name=""
                     required
                     type="text"
@@ -247,6 +250,7 @@ const Page = () => {
                 <label>
                   <span>Official Phone Number</span>
                   <Input
+                    className="dark:border-white"
                     name=""
                     required
                     type="text"
@@ -266,6 +270,7 @@ const Page = () => {
                     <Icon icon="ri:twitter-x-fill" /> X Link
                   </span>
                   <Input
+                    className="dark:border-white"
                     name=""
                     type="text"
                     value={twitter}
@@ -282,6 +287,7 @@ const Page = () => {
                     <Icon icon="streamline:instagram" /> Instagram Link
                   </span>
                   <Input
+                    className="dark:border-white"
                     name=""
                     type="text"
                     value={instagram}
@@ -300,6 +306,7 @@ const Page = () => {
                     <Icon icon="fluent-mdl2:website" /> Website
                   </span>
                   <Input
+                    className="dark:border-white"
                     name=""
                     type="text"
                     value={website}
@@ -316,6 +323,7 @@ const Page = () => {
                     <Icon icon="ic:sharp-tiktok" /> Tiktok Link
                   </span>
                   <Input
+                    className="dark:border-white"
                     name=""
                     type="text"
                     value={tiktok}
@@ -328,17 +336,20 @@ const Page = () => {
             </div>
           </div>
 
-          <div className="border p-4 rounded-xl relative space-y-4">
-            <p className="absolute bg-white -top-3 right-4 px-2">About Hub</p>
+          <div className="border p-4 rounded-xl relative space-y-4 dark:border-white">
+            <p className="absolute bg-white dark:bg-black -top-7 right-4 px-2">
+              About Hub
+            </p>
 
             <div>
               <label>
                 <span>Upload Images of Hub</span>
                 <p className="text-[#fc045c] mb-4">
-                  (*) Only accept images less than 1mb in size and up to 3 image
+                  (*) Only accept images less than 1mb in size and up to 4 image
                   files
                 </p>
                 <Input
+                  className="dark:border-white"
                   name="images"
                   type="file"
                   accept="image/*"
@@ -365,6 +376,8 @@ const Page = () => {
               <label>
                 <span>Hub Description</span>
                 <Textarea
+                  className="dark:border-white"
+                  rows={5}
                   placeholder="Tell us about your hub here..."
                   value={description}
                   onChange={(e) => {
@@ -381,12 +394,12 @@ const Page = () => {
                 <div className="flex gap-2 justify-center items-center flex-wrap lg:flex-nowrap">
                   <DropdownMenu>
                     <DropdownMenuTrigger>
-                      <div className="flex rounded-md bg-black text-white py-1.5 px-2 items-center w-[125px]">
+                      <div className="flex rounded-md bg-black dark:bg-white dark:text-black text-white py-1.5 px-2 items-center w-[125px]">
                         {dayOpen ? dayOpen : 'Day Open'}
                         <Icon icon="flowbite:chevron-sort-outline" />
                       </div>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
+                    <DropdownMenuContent className="dark:bg-white dark:text-black">
                       <DropdownMenuItem
                         onSelect={() => {
                           setDayOpen('Monday');
@@ -439,30 +452,30 @@ const Page = () => {
                     </DropdownMenuContent>
                   </DropdownMenu>
                   <Input
+                    className="dark:border-white w-fit"
                     name="open"
                     type="time"
                     value={openTime}
                     onChange={(e) => {
                       setOpenTime(e.target.value);
                     }}
-                    className="w-fit"
                   />
                   <p>-</p>
                   <Input
+                    className="dark:border-white w-fit"
                     name="close"
                     type="time"
                     value={closingTime}
                     onChange={(e) => {
                       setClosingTime(e.target.value);
                     }}
-                    className="w-fit"
                   />
 
                   <Button onClick={handleAddSchedule}>+</Button>
                 </div>
                 <div>
                   {schedule.length > 0 && (
-                    <ul className="bg-black flex flex-col items-center mt-3 rounded-lg text-white p-4">
+                    <ul className="bg-black dark:bg-white dark:text-black flex flex-col items-center mt-3 rounded-lg text-white p-4">
                       {schedule.map((day, i) => (
                         <li key={i} className="my-2">
                           <div className="flex gap-2 text-base items-center">
@@ -491,6 +504,8 @@ const Page = () => {
               <label>
                 <span>Hub Notice</span>
                 <Textarea
+                  className="dark:border-white"
+                  rows={5}
                   placeholder="Pass important notice here..."
                   value={notice}
                   onChange={(e) => {
@@ -500,41 +515,8 @@ const Page = () => {
               </label>
             </div>
           </div>
-          <div className="border p-4 rounded-xl relative space-y-4">
-            <p className="absolute bg-white -top-3 right-4 px-2">
-              Secure your account
-            </p>
-            <div className="lg:flex gap-3 lg:space-y-0 items-center space-y-3">
-              <div className="lg:w-6/12">
-                <label>
-                  <span>Password</span>
-                  <Input
-                    name="password"
-                    required
-                    type="password"
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                    }}
-                  />
-                </label>
-              </div>
-              <div className="lg:w-6/12">
-                <label>
-                  <span>Confirm Password</span>
-                  <Input
-                    name="confirm-password"
-                    required
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => {
-                      setConfirmPassword(e.target.value);
-                    }}
-                  />
-                </label>
-              </div>
-            </div>
-          </div>
+          {errorMessage && <p>{errorMessage}</p>}
+          {successfull && <p>{successfull}</p>}
           <div className="flex justify-center my-5">
             <LoadingButton />
           </div>

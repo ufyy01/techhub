@@ -12,12 +12,13 @@ const Pagination = ({ pageCount }: { pageCount: number }) => {
 
     let currentPage = (data.selected + 1).toString();
 
-    console.log(currentPage);
-
     if (currentPage) {
       params.set('page', currentPage);
-    } else {
-      params.delete('page');
+    }
+
+    const sortParam = searchParams.get('sort');
+    if (sortParam) {
+      params.set('sort', sortParam); // Retain the sorting
     }
     replace(`${pathname}?${params.toString()}`);
   };
@@ -29,7 +30,7 @@ const Pagination = ({ pageCount }: { pageCount: number }) => {
       breakLabel={'..'}
       pageCount={pageCount}
       marginPagesDisplayed={3}
-      pageRangeDisplayed={1}
+      pageRangeDisplayed={2}
       onPageChange={handleClick}
       containerClassName="flex justify-between w-full md:w-6/12 lg:w-5/12 mx-auto my-8 text-white dark:text-black"
       pageClassName="pag-btn"

@@ -9,6 +9,8 @@ import Letters from '@/components/letters';
 import ClearFilter from '@/components/clearFilter';
 import { Playfair_Display } from 'next/font/google';
 import Pagination from '@/components/custom-pagination';
+import StateSort from '@/components/stateSort';
+import Link from 'next/link';
 
 const playfair = Playfair_Display({
   weight: '800',
@@ -25,13 +27,20 @@ async function getHubs(query?: any): Promise<Hubs> {
       } else if (query.letter) {
         return `${base}?letter=${query.letter}`;
       } else if (query.page) {
-        return `${base}?page=${query.page}`;
+        const params = new URLSearchParams(query);
+        return `${base}?${params.toString()}`;
+      } else if (query.sort) {
+        return `${base}?sort=${query.sort}`;
       }
     }
     return base;
   };
 
-  const res = await fetch(url());
+  const res = await fetch(url(), {
+    next: {
+      revalidate: 0,
+    },
+  });
 
   if (!res.ok) {
     throw new Error('Failed to fetch hubs');
@@ -43,12 +52,18 @@ async function getHubs(query?: any): Promise<Hubs> {
 const Page = async ({
   searchParams,
 }: {
-  searchParams?: { search?: string; letter?: string; page?: number };
+  searchParams?: {
+    search?: string;
+    letter?: string;
+    page?: number;
+    sort?: string;
+  };
 }) => {
   const query = {
     search: searchParams?.search || '',
     letter: searchParams?.letter || '',
     page: searchParams?.page || '',
+    sort: searchParams?.sort || '',
   };
 
   const hubs = await getHubs(query);
@@ -56,11 +71,12 @@ const Page = async ({
   return (
     <>
       <Card className="rounded-2xl p-4 w-11/12 mx-auto my-6 ">
-        <div className="flex my-5">
-          <div className="lg:ms-5">
+        <div className="md:flex my-5">
+          <div className="lg:ms-5 flex gap-2">
             <ClearFilter />
+            <StateSort />
           </div>
-          <div className="ms-auto w-full">
+          <div className="ms-auto w-full mt-2 lg:mt-0">
             <Search />
           </div>
         </div>
@@ -72,24 +88,28 @@ const Page = async ({
                 key={hub._id}
               >
                 <div className="relative">
-                  <div className="absolute w-[100px] h-[120px] bg-white dark:bg-black bottom-0 right-0 rounded-tl-[50%] z-20 flex justify-center items-center">
-                    <div className="bg-black dark:bg-white w-20 h-20 flex justify-center items-center rounded-full">
-                      <Icon
-                        icon="mdi:arrow"
-                        color="#fc045c"
-                        style={{ width: '34', height: '34' }}
-                        className="transition-all hover:rotate-12 hover:scale-150"
-                      />
+                  <Link href={`/get-hubs/${hub._id}`}>
+                    <div className="absolute w-[100px] h-[120px] bg-white dark:bg-black bottom-0 right-0 rounded-tl-[50%] z-20 flex justify-center items-center">
+                      <div className="bg-black dark:bg-white w-20 h-20 flex justify-center items-center rounded-full">
+                        <Icon
+                          icon="mdi:arrow"
+                          color="#fc045c"
+                          style={{ width: '34', height: '34' }}
+                          className="transition-all hover:rotate-12 hover:scale-150"
+                        />
+                      </div>
                     </div>
-                  </div>
+                  </Link>
 
                   <div className="relative w-full h-[300px]">
-                    <Image
-                      src={hub.images[0]['secure_url']}
-                      alt="hub"
-                      priority
-                      fill
-                    />
+                    {hub.images.length > 0 && (
+                      <Image
+                        src={hub.images[0]['secure_url']}
+                        alt="hub"
+                        priority
+                        fill
+                      />
+                    )}
                   </div>
                   <div className="mt-2 absolute bottom-3 left-3 z-20 w-6/12">
                     <h2

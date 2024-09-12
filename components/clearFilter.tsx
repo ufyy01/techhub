@@ -1,5 +1,4 @@
 'use client';
-import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { Playfair_Display } from 'next/font/google';
 
@@ -10,10 +9,8 @@ const playfair = Playfair_Display({
 });
 
 const ClearFilter = () => {
-  const router = useRouter();
-
   const handleClearFilters = () => {
-    router.push('/get-hubs');
+    window.location.href = '/get-hubs';
   };
 
   return (

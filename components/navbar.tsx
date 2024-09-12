@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Search from './search';
 import Logo from '../public/logo.png';
 import { Button } from './ui/button';
 import Link from 'next/link';
@@ -15,15 +14,17 @@ const playfair = Playfair_Display({
 const Navbar = () => {
   return (
     <header className="sticky top-2 w-11/12 md:w-9/12 mx-auto mb-8 z-50 rounded-full glass">
-      <nav className="flex justify-between items-center py-2 h-20 gap-5 px-4 w-fit md:w-8/12 mx-auto">
-        <Image
-          src={Logo}
-          alt="logo"
-          height={120}
-          width={120}
-          priority
-          className="mt-2"
-        />
+      <nav className="flex justify-between items-center py-2 h-20 gap-5 px-4 w-fit md:w-9/12 mx-auto">
+        <Link href={'/'}>
+          <Image
+            src={Logo}
+            alt="logo"
+            height={70}
+            width={70}
+            priority
+            className="mt-2"
+          />
+        </Link>
         <div className="flex items-center gap-2">
           <Link href="/create-hub">
             <Button className={`${playfair.className} text-lg`}>Add Hub</Button>

@@ -1,7 +1,7 @@
 import { connect } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { SortOrder } from 'mongoose';
-import { getLocation } from '@/lib/utils';
+import { getLocation, verfyEmail } from '@/lib/utils';
 import Hub from '@/lib/Models/hub';
 
 //get all hubs
@@ -11,14 +11,14 @@ export const GET = async (request: Request) => {
     let sort = searchParams.get('sort');
     let order = searchParams.get('order');
     let page = parseInt(searchParams.get('page') || '1');
-    let limit = parseInt(searchParams.get('limit') || '10');
+    let limit = parseInt(searchParams.get('limit') || '24');
     let keywords = searchParams.get('search');
     let letter = searchParams.get('letter');
 
     sort = sort || 'name';
     order = order || 'asc';
     page = page ? page : 1;
-    limit = limit ? limit : 10;
+    limit = limit ? limit : 24;
     keywords = keywords ? keywords.toLowerCase() : '';
     letter = letter ? letter.toString() : '';
 
@@ -98,6 +98,17 @@ export const POST = async (request: Request) => {
       );
     }
 
+    const goodEmail = verfyEmail(body.name, body.email);
+
+    if (!goodEmail) {
+      return NextResponse.json(
+        {
+          message: 'Please enter an official email',
+        },
+        { status: 400 }
+      );
+    }
+
     const hubEmail = await Hub.findOne({ name: body.email });
     if (hubEmail) {
       return NextResponse.json(
@@ -108,8 +119,11 @@ export const POST = async (request: Request) => {
       );
     }
 
+    let lat: number | undefined;
+    let lng: number | undefined;
+
     let geoLocation = await getLocation(body.address);
-    if (!geoLocation) {
+    if (geoLocation.error) {
       return NextResponse.json(
         {
           message: 'Location not found, Please enter a valid location',
@@ -118,7 +132,9 @@ export const POST = async (request: Request) => {
       );
     }
 
-    const { lat, lng } = geoLocation;
+    if (geoLocation.coordinates) {
+      ({ lat, lng } = geoLocation.coordinates);
+    }
 
     const location = {
       type: 'Point',
@@ -132,7 +148,7 @@ export const POST = async (request: Request) => {
       { status: 200 }
     );
   } catch (error: any) {
-    return NextResponse.json('Error in fetching hubs' + error.message, {
+    return NextResponse.json('Error in creating hub:' + error.message, {
       status: 400,
     });
   }
