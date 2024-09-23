@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Logo from '../public/logo.png';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { Playfair_Display } from 'next/font/google';
@@ -17,7 +16,9 @@ const Navbar = () => {
       <nav className="flex justify-between items-center py-2 h-20 gap-5 px-4 w-fit md:w-9/12 mx-auto">
         <Link href={'/'}>
           <Image
-            src={Logo}
+            src={
+              'https://res.cloudinary.com/daisikwbm/image/upload/v1727061378/TechHubs_upload/logo_ejjcvm.png'
+            }
             alt="logo"
             height={80}
             width={80}
