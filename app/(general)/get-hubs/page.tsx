@@ -82,7 +82,7 @@ const Page = async ({
         </div>
         {hubs.data.length > 0 && (
           <div className="flex">
-            <div className="flex flex-wrap gap-2 w-full h-fit md:pl-5">
+            <div className="flex flex-wrap gap-1 w-full h-fit md:pl-5">
               {hubs.data.map((hub, index) => (
                 <Card
                   className="flex-sm md:flex-md xl:flex-lg rounded-xl rounded-br-[70px] border-none outline-none shadow-none overflow-hidden h-[300px]"
@@ -112,16 +112,16 @@ const Page = async ({
                         />
                       )}
                     </div>
-                    <div className="mt-2 absolute bottom-3 left-3 z-20 w-6/12">
+                    <div className="mt-2 absolute bottom-3 left-3 z-20 w-5/12">
                       <h2
                         className={cn(
-                          'text-xl mx-2 text-white mb-2',
+                          'text-sm md:text-xl mx-1 text-white mb-2',
                           playfair.className
                         )}
                       >
                         {hub.name}
                       </h2>
-                      <div className="flex text-[#fc045c]">
+                      <div className="flex text-[#fc045c] text-sm md:text-xl">
                         <MapPin />
                         <p>{hub.state}</p>
                       </div>

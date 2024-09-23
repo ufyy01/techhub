@@ -62,7 +62,7 @@ const Letters = () => {
   };
 
   return (
-    <div className="w-[15px] mr-5 space-y-1 ms-2">
+    <div className="w-[5px] md:w-[15px] mr-5 space-y-1 md:ms-2 ms-1">
       {letters.map((alpha, index) => (
         <Button
           key={index}

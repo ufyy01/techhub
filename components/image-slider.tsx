@@ -44,7 +44,7 @@ const Slider = ({ images }: { images: Image[] }) => {
         {images.map((image, index) => (
           <motion.img
             key={image._id}
-            className="rounded-[12px]"
+            className="rounded-[12px] object-cover"
             src={image.secure_url}
             initial="center"
             animate={positions[postionIndexes[index]]}
@@ -59,7 +59,7 @@ const Slider = ({ images }: { images: Image[] }) => {
         {images.map((image, index) => (
           <motion.img
             key={image._id}
-            className="rounded-[12px]"
+            className="rounded-[12px] object-cover"
             src={image.secure_url}
             initial="center"
             animate={positions[postionIndexes[index]]}

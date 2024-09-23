@@ -79,6 +79,7 @@ const config = {
         lg: '0 0 calc(95% / 3)',
         md: '0 0 calc(95% / 2)',
         sm: '0 0 100%',
+        card: '0 0 calc(100% / 4)',
       },
     },
   },

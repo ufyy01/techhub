@@ -22,7 +22,7 @@ export const GET = async (request: Request) => {
             coordinates: [parseFloat(lng), parseFloat(lat)],
           },
           key: 'location',
-          maxDistance: 1000 * 15,
+          maxDistance: 1000 * 10, // 10 kilometers or 10,000 meters
           distanceField: 'dist.calculated',
           spherical: true,
         },
