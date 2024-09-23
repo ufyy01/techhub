@@ -19,16 +19,19 @@ const Navbar = () => {
           <Image
             src={Logo}
             alt="logo"
-            height={70}
-            width={70}
+            height={80}
+            width={80}
             priority
-            className="mt-2"
+            className=""
           />
         </Link>
         <div className="flex items-center gap-2">
-          <Link href="/create-hub">
-            <Button className={`${playfair.className} text-lg`}>Add Hub</Button>
+          <Link href="/get-hubs">
+            <Button className={`${playfair.className} text-md`}>Hubs</Button>
           </Link>
+          {/* <Link href="/create-hub">
+            <Button className={`${playfair.className} text-lg`}>Add Hub</Button>
+          </Link> */}
           <ModeToggle />
         </div>
       </nav>

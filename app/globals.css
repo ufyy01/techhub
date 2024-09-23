@@ -69,7 +69,7 @@
 }
 
 .glass {
-  @apply bg-white bg-opacity-10 backdrop-filter backdrop-blur-xl border-solid border border-white border-opacity-20;
+  @apply bg-black shadow-md bg-opacity-10 backdrop-filter backdrop-blur-xl border-solid border border-white border-opacity-20;
 }
 
 .pag-btn {

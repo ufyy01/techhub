@@ -22,7 +22,7 @@
     "cloudinary": "^2.4.0",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.1.8",
-    "framer-motion": "^11.3.31",
+    "framer-motion": "^11.5.4",
     "lucide-react": "^0.437.0",
     "mongodb": "^6.8.0",
     "mongoose": "^8.5.3",
