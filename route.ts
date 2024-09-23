@@ -58,8 +58,11 @@ export const PATCH = async (request: Request, context: { params: any }) => {
     const hub = await Hub.findById(id);
     if (!hub) throw new Error('Hub does not exist');
 
+    let lat: number | undefined;
+    let lng: number | undefined;
+
     let geoLocation = await getLocation(body.address);
-    if (!geoLocation) {
+    if (geoLocation.error) {
       return NextResponse.json(
         {
           message: 'Location not found, Please enter a valid location',
@@ -68,7 +71,9 @@ export const PATCH = async (request: Request, context: { params: any }) => {
       );
     }
 
-    const { lat, lng } = geoLocation;
+    if (geoLocation.coordinates) {
+      ({ lat, lng } = geoLocation.coordinates);
+    }
 
     const location = {
       type: 'Point',
