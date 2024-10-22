@@ -15,7 +15,7 @@ import { Playfair_Display } from 'next/font/google';
 import { Card } from '@/components/ui/card';
 import Photocard from '@/components/photocard';
 import LoadingButton from '@/components/loadingButton';
-import { uploadPhoto } from '@/action/uploadActions';
+import { uploadPhoto } from '@/app/actions/uploadActions';
 
 const playfair = Playfair_Display({
   weight: '700',

@@ -38,7 +38,7 @@ UserSchema.pre('save', async function (next) {
   }
 });
 
-export type Hub = InferSchemaType<typeof UserSchema>;
+export type User = InferSchemaType<typeof UserSchema>;
 
 const User = models.User || model('User', UserSchema);
 
