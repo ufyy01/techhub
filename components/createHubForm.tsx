@@ -23,7 +23,7 @@ const playfair = Playfair_Display({
   style: 'italic',
 });
 
-const Page = () => {
+const CreateForm = () => {
   const formRef = useRef<HTMLFormElement>(null);
 
   const [name, setName] = useState('');
@@ -526,4 +526,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default CreateForm;

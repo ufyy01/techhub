@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LoginSchema } from '@/lib/Schemas/LoginSchema';
 import { doLogin } from '@/app/actions/authActions';
-import { FormEvent, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import FormError from './formError';
 

@@ -42,17 +42,28 @@ export const GET = async (request: Request) => {
 
 export const POST = async (request: Request) => {
   try {
-    const body = await request.json();
+    const { name, password, role, email } = await request.json();
+
+    if (!name || !password || !role || !email) {
+      return NextResponse.json(
+        { message: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
     await connect();
 
-    const user = await User.findOne({ email: body.email });
-    if (user) throw new Error('User already exists');
+    const user = await User.findOne({ email: email });
+    if (user)
+      return NextResponse.json(
+        { message: 'User already exist! Kindly login in 😒' },
+        { status: 400 }
+      );
 
-    const newUser = new User(body);
+    const newUser = new User({ name, password, role, email });
     await newUser.save();
 
     return NextResponse.json(
-      { message: 'User has been created' },
+      { message: 'Profile has been created 🎉' },
       { status: 201 }
     );
   } catch (error: any) {
