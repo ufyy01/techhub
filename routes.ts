@@ -1,7 +1,13 @@
-export const publicRoutes = ['/', '/get-hubs'];
+export const publicRoutes = ['/'];
 
-export const authRoutes = ['/account/login', '/account/register'];
+export const hubRoutes = '/get-hubs';
 
-export const apiAuthPrefix = '/api/auth';
+export const authRoutes = [
+  '/account/login',
+  '/account/register',
+  '/account/error',
+];
+
+export const apiAuthPrefix = '/api';
 
 export const DEFAULT_LOGIN_REDIRECT_URL = '/profile';

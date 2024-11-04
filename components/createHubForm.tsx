@@ -171,13 +171,13 @@ const CreateForm = () => {
 
   return (
     <main className="m-4 lg:w-10/12 mx-auto">
-      <Card className="p-7 mx-auto glass">
+      <Card className="p-7 mx-auto">
         <div className="mb-4">
           <h1 className={`${playfair.className} text-3xl mb-2`}>Add Hub</h1>
           <p>Add your hub</p>
         </div>
         <form className="space-y-8" action={handleAddForm} ref={formRef}>
-          <div className="border p-4 rounded-xl relative space-y-4 dark:border-white">
+          <div className="border p-4 rounded-xl relative space-y-4 dark:border-white border-black">
             <p className="absolute bg-white dark:bg-black -top-3 right-4 px-2">
               Hub Details
             </p>
@@ -186,7 +186,7 @@ const CreateForm = () => {
               <label>
                 <span>Hub Name</span>
                 <Input
-                  className="dark:border-white"
+                  className="dark:border-white border-black"
                   name="name"
                   required
                   type="text"
@@ -202,7 +202,7 @@ const CreateForm = () => {
               <label>
                 <span>Official Email</span>
                 <Input
-                  className="dark:border-white"
+                  className="dark:border-white border-black"
                   name=""
                   required
                   type="email"
@@ -218,7 +218,7 @@ const CreateForm = () => {
               <label>
                 <span>Hub Address</span>
                 <Input
-                  className="dark:border-white"
+                  className="dark:border-white border-black"
                   name=""
                   required
                   type="text"
@@ -235,7 +235,7 @@ const CreateForm = () => {
                 <label>
                   <span>State</span>
                   <Input
-                    className="dark:border-white"
+                    className="dark:border-white border-black"
                     name=""
                     required
                     type="text"
@@ -250,7 +250,7 @@ const CreateForm = () => {
                 <label>
                   <span>Official Phone Number</span>
                   <Input
-                    className="dark:border-white"
+                    className="dark:border-white border-black"
                     name=""
                     required
                     type="text"
@@ -270,7 +270,7 @@ const CreateForm = () => {
                     <Icon icon="ri:twitter-x-fill" /> X Link
                   </span>
                   <Input
-                    className="dark:border-white"
+                    className="dark:border-white border-black"
                     name=""
                     type="text"
                     value={twitter}
@@ -287,7 +287,7 @@ const CreateForm = () => {
                     <Icon icon="streamline:instagram" /> Instagram Link
                   </span>
                   <Input
-                    className="dark:border-white"
+                    className="dark:border-white border-black"
                     name=""
                     type="text"
                     value={instagram}
@@ -306,7 +306,7 @@ const CreateForm = () => {
                     <Icon icon="fluent-mdl2:website" /> Website
                   </span>
                   <Input
-                    className="dark:border-white"
+                    className="dark:border-white border-black"
                     name=""
                     type="text"
                     value={website}
@@ -323,7 +323,7 @@ const CreateForm = () => {
                     <Icon icon="ic:sharp-tiktok" /> Tiktok Link
                   </span>
                   <Input
-                    className="dark:border-white"
+                    className="dark:border-white border-black"
                     name=""
                     type="text"
                     value={tiktok}
@@ -336,7 +336,7 @@ const CreateForm = () => {
             </div>
           </div>
 
-          <div className="border p-4 rounded-xl relative space-y-4 dark:border-white">
+          <div className="border p-4 rounded-xl relative space-y-4 dark:border-white border-black">
             <p className="absolute bg-white dark:bg-black -top-7 right-4 px-2">
               About Hub
             </p>
@@ -349,7 +349,7 @@ const CreateForm = () => {
                   files
                 </p>
                 <Input
-                  className="dark:border-white"
+                  className="dark:border-white border-black"
                   name="images"
                   type="file"
                   accept="image/*"
@@ -376,7 +376,7 @@ const CreateForm = () => {
               <label>
                 <span>Hub Description</span>
                 <Textarea
-                  className="dark:border-white"
+                  className="dark:border-white border-black"
                   rows={5}
                   placeholder="Tell us about your hub here..."
                   value={description}
@@ -390,11 +390,11 @@ const CreateForm = () => {
             <div>
               <p>Schedule</p>
 
-              <div className="lg:flex items-center justify-between">
+              <div className="items-center justify-between">
                 <div className="flex gap-2 justify-center items-center flex-wrap lg:flex-nowrap">
                   <DropdownMenu>
                     <DropdownMenuTrigger>
-                      <div className="flex rounded-md bg-black dark:bg-white dark:text-black text-white py-1.5 px-2 items-center w-[125px]">
+                      <div className="flex rounded-md bg-black dark:bg-white dark:text-black text-white py-1.5 px-2 items-center w-[180px]">
                         {dayOpen ? dayOpen : 'Day Open'}
                         <Icon icon="flowbite:chevron-sort-outline" />
                       </div>
@@ -452,7 +452,7 @@ const CreateForm = () => {
                     </DropdownMenuContent>
                   </DropdownMenu>
                   <Input
-                    className="dark:border-white w-fit"
+                    className="dark:border-white border-black w-fit"
                     name="open"
                     type="time"
                     value={openTime}
@@ -462,7 +462,7 @@ const CreateForm = () => {
                   />
                   <p>-</p>
                   <Input
-                    className="dark:border-white w-fit"
+                    className="dark:border-white border-black w-fit"
                     name="close"
                     type="time"
                     value={closingTime}
@@ -504,7 +504,7 @@ const CreateForm = () => {
               <label>
                 <span>Hub Notice</span>
                 <Textarea
-                  className="dark:border-white"
+                  className="dark:border-white border-black"
                   rows={5}
                   placeholder="Pass important notice here..."
                   value={notice}

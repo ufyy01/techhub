@@ -1,7 +1,7 @@
 import mongoose, { InferSchemaType, model, models, Schema } from 'mongoose';
 
 const FavSchema = new Schema({
-  customer: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,

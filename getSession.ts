@@ -1,7 +1,6 @@
-import { cache } from 'react';
 import { auth } from './auth';
 
-export const getSession = cache(async () => {
+export const getSession = async () => {
   const session = await auth();
-  return session;
-});
+  return session?.user;
+};

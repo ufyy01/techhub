@@ -1,26 +1,12 @@
 'use client';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
-import Image from 'next/image';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { useEffect, useState } from 'react';
 import { Playfair_Display } from 'next/font/google';
 import NearMeCard from './nearMeCard';
+import { Icon } from '@iconify/react/dist/iconify.js';
+import { Grid } from 'react-loader-spinner';
 
 const playfair = Playfair_Display({
   weight: '600',
@@ -136,13 +122,27 @@ const Nearme = () => {
     loadHubs();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="h-[40vh] flex justify-center items-center">
+        <Grid
+          visible={true}
+          height="80"
+          width="80"
+          color="#fc045c"
+          ariaLabel="grid-loading"
+          radius="12.5"
+          wrapperStyle={{}}
+          wrapperClass="grid-wrapper"
+        />
+      </div>
+    );
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div>
       {hubs && hubs.data.length > 0 && (
-        <div className="grid place-items-center my-6">
+        <div className="grid place-items-center mt-8 h-full grid-cols-1 pb-8">
           {hubs.data.map((hub, index) => (
             <NearMeCard
               hub={hub}
@@ -155,12 +155,43 @@ const Nearme = () => {
         </div>
       )}
       {hubs && hubs.data.length === 0 && (
-        <Alert className="w-6/12">
-          <AlertTitle className="text-xl">Heads up!</AlertTitle>
-          <AlertDescription className="text-base">
-            Kindly allow access to your location to find amazing hubs near you!
-          </AlertDescription>
-        </Alert>
+        <div className="pb-8">
+          <Alert className="w-9/12 mx-auto">
+            <AlertTitle className="text-xl text-center font-semibold">
+              Find More!
+            </AlertTitle>
+            <AlertDescription className="text-base flex flex-col items-center text-center">
+              <Icon
+                icon="mingcute:search-ai-fill"
+                style={{ width: '50', height: '50' }}
+              />
+              Discover more amazing co-working spaces here.
+              <Link href="/get-hubs" className="block mt-2">
+                <Button>Find More</Button>
+              </Link>
+            </AlertDescription>
+          </Alert>
+        </div>
+      )}
+      {!hubs && (
+        <div className="pb-8">
+          <Alert className="w-9/12 mx-auto">
+            <AlertTitle className="text-xl text-center font-semibold">
+              Oops!
+            </AlertTitle>
+            <AlertDescription className="text-base flex flex-col items-center text-center">
+              <Icon
+                icon="gis:map-search"
+                style={{ width: '50', height: '50' }}
+              />
+              Kindly allow access to your location to find amazing hubs near
+              you! Browse through all hubs 👇.
+              <Link href="/get-hubs" className="block mt-2">
+                <Button>Find More</Button>
+              </Link>
+            </AlertDescription>
+          </Alert>
+        </div>
       )}
     </div>
   );

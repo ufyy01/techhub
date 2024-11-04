@@ -5,6 +5,7 @@ import { connect } from './lib/db';
 import User from './lib/Models/user';
 import { compare } from 'bcrypt';
 import { authConfig } from './auth.config';
+import { LoginSchema } from './lib/Schemas/LoginSchema';
 
 export const {
   handlers: { GET, POST },
@@ -21,34 +22,16 @@ export const {
         password: { label: 'Password', type: 'password' },
       },
       authorize: async (credentials) => {
-        const email = credentials.email as string | undefined;
-        const password = credentials.password as string | undefined;
-
-        if (!email || !password) {
-          throw new Error('Please provide a valid email and password');
+        const validated = LoginSchema.safeParse(credentials);
+        if (validated.success) {
+          const { email, password } = validated.data;
+          connect();
+          const user = await User.findOne({ email }).select('+password +role');
+          if (!user || !user.password) return null;
+          const isMatched = await compare(password, user.password);
+          if (isMatched) return user;
         }
-
-        connect();
-
-        const user = await User.findOne({ email }).select('+password +role');
-
-        if (!user) {
-          throw new Error('Invalid credentials');
-        }
-
-        const isMatched = await compare(password, user.password);
-
-        if (!isMatched) {
-          throw new Error('Invalid credentials');
-        }
-
-        const userData = {
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          id: user._id,
-        };
-        return userData;
+        return null;
       },
     }),
 
@@ -66,10 +49,10 @@ export const {
   ],
   pages: {
     signIn: '/account/login',
+    error: '/account/error',
   },
   callbacks: {
     async signIn({ user, account }) {
-      console.log('USER', user);
       try {
         await connect();
         const { email, name, id } = user;
@@ -84,7 +67,7 @@ export const {
         }
 
         if (account?.provider === 'Credentials') {
-          const existingUser = await User.findById(user.id);
+          const existingUser = await User.findOne({ email });
           if (!existingUser) {
             return false;
           }
@@ -107,7 +90,7 @@ export const {
 
     async jwt({ token }) {
       if (!token.sub) return token;
-      const existingUser = await User.findById(token.sub);
+      const existingUser = await User.findOne({ email: token.email });
       if (existingUser) {
         token.role = existingUser.role;
       }

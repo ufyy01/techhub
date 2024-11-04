@@ -3,7 +3,7 @@ import { Button } from './ui/button';
 import { Playfair_Display } from 'next/font/google';
 
 const playfair = Playfair_Display({
-  weight: '500',
+  weight: '400',
   subsets: ['latin'],
   style: 'italic',
 });
@@ -15,7 +15,7 @@ const ClearFilter = () => {
 
   return (
     <div>
-      <Button onClick={handleClearFilters} className={playfair.className}>
+      <Button onClick={handleClearFilters} className={`${playfair.className}`}>
         Clear Filter
       </Button>
     </div>
