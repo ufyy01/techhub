@@ -28,7 +28,7 @@ const Navbar = () => {
           height={80}
           width={80}
           priority
-          className=""
+          className="ms-2"
         />
       </Link>
       <div>
