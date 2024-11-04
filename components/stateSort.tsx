@@ -4,7 +4,7 @@ import { Button } from './ui/button';
 import { Playfair_Display } from 'next/font/google';
 
 const playfair = Playfair_Display({
-  weight: '500',
+  weight: '400',
   subsets: ['latin'],
   style: 'italic',
 });
@@ -26,7 +26,7 @@ const StateSort = () => {
   return (
     <div>
       <Button className={playfair.className} onClick={handleSort}>
-        Sort By State
+        Sort
       </Button>
     </div>
   );

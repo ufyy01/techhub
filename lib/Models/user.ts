@@ -18,11 +18,21 @@ const UserSchema = new Schema(
     password: {
       type: String,
     },
+    role: {
+      type: String,
+      enum: ['admin', 'user', 'manager'],
+      default: 'user',
+    },
+    authProviderId: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
 
 UserSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+
   try {
     const password = this.get('password');
     if (typeof password !== 'string') {
@@ -38,7 +48,7 @@ UserSchema.pre('save', async function (next) {
   }
 });
 
-export type Hub = InferSchemaType<typeof UserSchema>;
+export type User = InferSchemaType<typeof UserSchema>;
 
 const User = models.User || model('User', UserSchema);
 

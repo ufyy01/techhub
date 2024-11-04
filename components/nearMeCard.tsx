@@ -48,14 +48,13 @@ const NearMeCard = ({
   index: number;
 }) => {
   const x = useMotionValue(0);
-  const opacity = useTransform(x, [-180, 0, 180], [0, 1, 0]);
   const rotateRaw = useTransform(x, [-150, 150], [-5, 5]);
   const [showCancel, setShowCancel] = useState(false);
   const [showGo, setShowGo] = useState(false);
 
   const router = useRouter();
 
-  const isFront = hub._id === cards[cards.length - 1]._id;
+  const isFront = hub._id === cards[0]._id;
 
   const rotate = useTransform(() => {
     const offset = isFront ? 0 : index % 2 ? 3 : -3;
@@ -92,18 +91,18 @@ const NearMeCard = ({
         gridRow: 1,
         gridColumn: 1,
         x,
-        opacity,
         rotate,
         transition: '0.125s transform',
+        zIndex: index === 0 ? 100 : 100 - index,
       }}
-      className="w-10/12 rounded-xl hover:cursor-grab active:cursor-grabbing shadow-md origin-bottom relative"
+      className={`w-10/12 lg:w-9/12 rounded-xl hover:cursor-grab active:cursor-grabbing relative origin-bottom `}
       drag="x"
-      dragConstraints={{ left: 0, right: 0 }}
+      dragConstraints={{ left: 5, right: 5 }}
       onDragEnd={handleDragEnd}
       onDrag={handleDrag}
       animate={{ scale: isFront ? 1 : 0.98 }}
     >
-      <div className="relative w-full h-[400px]">
+      <div className="relative w-full h-[350px] lg:h-[450px]">
         {hub.images.length > 0 && (
           <Image
             src={hub.images[0]['secure_url']}
@@ -156,13 +155,13 @@ const NearMeCard = ({
         <h2 className={cn('text-xl mx-1 text-white mb-2', playfair.className)}>
           {hub.name}
         </h2>
-        <div className="flex text-[#fc045c] text-xl">
+        <div className="flex justify-end text-[#fc045c] text-xl">
           <MapPin />
           <p>{hub.state}</p>
         </div>
       </div>
-      <div className="mt-2 absolute top-3 left-3 z-20 bg-white dark:bg-black p-2 rounded-full">
-        <div className="flex text-[#fc045c] text-xl gap-2 font-bold">
+      <div className="mt-2 absolute top-3 left-3 z-20 ">
+        <div className="flex text-[#fc045c] text-base gap-2 font-bold">
           <Icon icon="gis:map-poi" />
           <p>{Math.ceil(hub.dist.calculated).toLocaleString()}m</p>
         </div>
