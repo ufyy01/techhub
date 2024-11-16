@@ -36,92 +36,31 @@ const Navbar = async () => {
         />
       </Link>
       <div>
-        {/* <Popover>
-          <PopoverTrigger asChild>
-            <Button size="icon" variant="ghost">
-              <Icon icon="subway:menu" className="text-[#fc045c]" />
-              <span className="sr-only">menu</span>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="lg:w-8/12 w-6/12">
-            <div className="flex flex-wrap gap-2 text-center justify-center">
-              <Link href="/profile">
-                <Button className="text-sm shadow-md" variant="outline">
-                  <Icon
-                    icon="iconamoon:profile-circle-fill"
-                    className="me-2 text-[#fc045c]"
-                  />
-                  Profile
-                </Button>
-              </Link>
-              <Link href="/get-hubs">
-                <Button className="text-sm shadow-md" variant="outline">
-                  <Icon
-                    icon="ph:building-office"
-                    className="me-2 text-[#fc045c]"
-                  />
-                  Hubs
-                </Button>
-              </Link>
-              <Link href="/create-hub">
-                <Button className="text-sm shadow-md" variant="outline">
-                  <Icon
-                    icon="ph:building-office"
-                    className="me-2 text-[#fc045c]"
-                  />
-                  Add Hub
-                </Button>
-              </Link>
-              {!session && (
-                <>
-                  <Link href="/account/login">
-                    <Button className="text-sm shadow-md" variant="outline">
-                      <Icon
-                        icon="material-symbols:tv-signin-outline"
-                        className="me-2 text-[#fc045c]"
-                      />
-                      Login
-                    </Button>
-                  </Link>
-                  <Link href="/account/register">
-                    <Button className="text-sm shadow-md" variant="outline">
-                      <Icon
-                        icon="mdi:register"
-                        className="me-2 text-[#fc045c]"
-                      />
-                      Sign Up
-                    </Button>
-                  </Link>
-                </>
-              )}
-              {session && <LogoutForm />}
-            </div>
-          </PopoverContent>
-        </Popover> */}
         <Dialog>
           <DialogTrigger>
-            <Button size="icon" type="button" variant="ghost">
-              <Icon icon="subway:menu" className="text-[#fc045c]" />
-              <span className="sr-only">menu</span>
-            </Button>
+            <Icon icon="subway:menu" className="text-[#fc045c]" />
+            <span className="sr-only">menu</span>
           </DialogTrigger>
-          <DialogContent className="lg:w-8/12 w-6/12">
+          <DialogContent className="w-6/12">
             <div className="flex flex-wrap gap-2 text-center justify-center">
-              <Link href="/profile">
-                <DialogClose>
-                  <Button
-                    className="text-sm shadow-md"
-                    type="button"
-                    variant="outline"
-                  >
-                    <Icon
-                      icon="iconamoon:profile-circle-fill"
-                      className="me-2 text-[#fc045c]"
-                    />
-                    Profile
-                  </Button>
-                </DialogClose>
-              </Link>
+              {session && (
+                <Link href="/profile">
+                  <DialogClose>
+                    <Button
+                      className="text-sm shadow-md"
+                      type="button"
+                      variant="outline"
+                    >
+                      <Icon
+                        icon="iconamoon:profile-circle-fill"
+                        className="me-2 text-[#fc045c]"
+                      />
+                      Profile
+                    </Button>
+                  </DialogClose>
+                </Link>
+              )}
+
               <Link href="/get-hubs">
                 <DialogClose>
                   <Button
@@ -137,21 +76,24 @@ const Navbar = async () => {
                   </Button>
                 </DialogClose>
               </Link>
-              <Link href="/create-hub">
-                <DialogClose>
-                  <Button
-                    className="text-sm shadow-md"
-                    type="button"
-                    variant="outline"
-                  >
-                    <Icon
-                      icon="ph:building-office"
-                      className="me-2 text-[#fc045c]"
-                    />
-                    Add Hub
-                  </Button>
-                </DialogClose>
-              </Link>
+              {session && session.role === 'manager' && (
+                <Link href="/create-hub">
+                  <DialogClose>
+                    <Button
+                      className="text-sm shadow-md"
+                      type="button"
+                      variant="outline"
+                    >
+                      <Icon
+                        icon="ph:building-office"
+                        className="me-2 text-[#fc045c]"
+                      />
+                      Add Hub
+                    </Button>
+                  </DialogClose>
+                </Link>
+              )}
+
               {!session && (
                 <>
                   <Link href="/account/login">

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import FavoriteSlide from '@/components/favoriteSlide';
 import HeroAni from '@/components/heroAni';
 import { getSession } from '@/getSession';
+import ClaimedSlide from '@/components/claimedSlide';
 
 export default async function Home() {
   const user = await getSession();
@@ -31,7 +32,7 @@ export default async function Home() {
           ></path>
         </svg>
       </div>
-      <div className="bg-black text-white -mt-1 pt-5">
+      <div className="bg-black text-white -mt-1 pt-5 pb-14">
         <div className="lg:w-10/12 lg:mx-auto mx-4 mb-5">
           <div className="flex justify-between items-center">
             <h3 className="font-semibold">Featured</h3>
@@ -53,7 +54,21 @@ export default async function Home() {
               </div>
               <p className="text-sm">Explore your favourite Hubs</p>
             </div>
-            <FavoriteSlide userId={user.id} />
+            {user.role === 'user' && <FavoriteSlide userId={user.id} />}
+          </div>
+        )}
+        {user && user.role === 'manager' && (
+          <div className="mt-10 pb-5">
+            <div className="lg:w-10/12 lg:mx-auto mx-4 mb-5">
+              <div className="flex justify-between items-center">
+                <h3 className="font-semibold">Claimed</h3>
+                <Link href="/profile">
+                  <p className="text-base">All</p>
+                </Link>
+              </div>
+              <p className="text-sm">Explore your claimed Hubs</p>
+            </div>
+            {user.role === 'manager' && <ClaimedSlide userId={user.id} />}
           </div>
         )}
       </div>
