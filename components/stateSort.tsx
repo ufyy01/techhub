@@ -1,13 +1,6 @@
 'use client';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from './ui/button';
-import { Playfair_Display } from 'next/font/google';
-
-const playfair = Playfair_Display({
-  weight: '400',
-  subsets: ['latin'],
-  style: 'italic',
-});
 
 const StateSort = () => {
   const searchParams = useSearchParams();
@@ -25,9 +18,7 @@ const StateSort = () => {
   };
   return (
     <div>
-      <Button className={playfair.className} onClick={handleSort}>
-        Sort
-      </Button>
+      <Button onClick={handleSort}>Sort</Button>
     </div>
   );
 };

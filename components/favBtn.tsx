@@ -11,6 +11,24 @@ const FavBtn = ({ hubId, userId }: { hubId: string; userId?: string }) => {
 
   const router = useRouter();
 
+  useEffect(() => {
+    const checkFave = async () => {
+      const base = `${process.env.NEXT_PUBLIC_PROXY_URL}/favs/hub?userId=${userId}&hubId=${hubId}`;
+
+      const res = await fetch(base);
+
+      const data = await res.json();
+
+      if (data.message === 'isFav') {
+        setFave(true);
+      } else {
+        setFave(false);
+      }
+    };
+
+    checkFave();
+  }, [hubId, userId]);
+
   const handleFave = async () => {
     const base = `${process.env.NEXT_PUBLIC_PROXY_URL}/favs?userId=${userId}&hubId=${hubId}`;
 

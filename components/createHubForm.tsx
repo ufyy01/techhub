@@ -11,17 +11,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Playfair_Display } from 'next/font/google';
 import { Card } from '@/components/ui/card';
 import Photocard from '@/components/photocard';
 import LoadingButton from '@/components/loadingButton';
 import { uploadPhoto } from '@/app/actions/uploadActions';
-
-const playfair = Playfair_Display({
-  weight: '700',
-  subsets: ['latin'],
-  style: 'italic',
-});
 
 const CreateForm = () => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -173,7 +166,7 @@ const CreateForm = () => {
     <main className="m-4 lg:w-10/12 mx-auto">
       <Card className="p-7 mx-auto">
         <div className="mb-4">
-          <h1 className={`${playfair.className} text-3xl mb-2`}>Add Hub</h1>
+          <h1 className="text-3xl mb-2">Add Hub</h1>
           <p>Add your hub</p>
         </div>
         <form className="space-y-8" action={handleAddForm} ref={formRef}>

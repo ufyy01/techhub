@@ -82,7 +82,7 @@ export const {
 
     async session({ session, token }) {
       if (token?.sub && token?.role) {
-        session.user.id = token.sub;
+        session.user.id = token.id as string;
         session.user.role = token.role as 'admin' | 'manager' | 'user';
       }
       return session;
@@ -93,6 +93,7 @@ export const {
       const existingUser = await User.findOne({ email: token.email });
       if (existingUser) {
         token.role = existingUser.role;
+        token.id = existingUser._id;
       }
       return token;
     },

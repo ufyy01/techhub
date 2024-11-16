@@ -1,13 +1,5 @@
 'use client';
 import { Button } from './ui/button';
-import { Playfair_Display } from 'next/font/google';
-
-const playfair = Playfair_Display({
-  weight: '400',
-  subsets: ['latin'],
-  style: 'italic',
-});
-
 const ClearFilter = () => {
   const handleClearFilters = () => {
     window.location.href = '/get-hubs';
@@ -15,9 +7,7 @@ const ClearFilter = () => {
 
   return (
     <div>
-      <Button onClick={handleClearFilters} className={`${playfair.className}`}>
-        Clear Filter
-      </Button>
+      <Button onClick={handleClearFilters}>Clear Filter</Button>
     </div>
   );
 };

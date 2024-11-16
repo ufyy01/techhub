@@ -1,13 +1,6 @@
 import type { Metadata } from 'next';
-import { Source_Sans_3 } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
-
-const source = Source_Sans_3({
-  weight: '400',
-  style: 'normal',
-  subsets: ['latin'],
-});
 
 export const metadata: Metadata = {
   title: 'Hub Radar',
@@ -21,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={source.className}>
+      <body>
         <ThemeProvider attribute="class" defaultTheme="sytem" enableSystem>
           {children}
         </ThemeProvider>
