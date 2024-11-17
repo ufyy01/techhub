@@ -1,6 +1,7 @@
 import { getUserId } from '@/getUserId';
 import { FavHub } from './favoriteSlide';
 import GetHubs from './getHubs';
+import ProfileMessage from './profileMessage';
 
 async function getClaimed(
   userId: string | undefined,
@@ -51,6 +52,7 @@ const GetClaimed = async ({
   return (
     <>
       <GetHubs hubs={hubs} show={false} title="Manage your claimed hubs 😎" />
+      <ProfileMessage hubs={hubs} />
     </>
   );
 };
