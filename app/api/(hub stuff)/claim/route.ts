@@ -1,8 +1,9 @@
 import { connect } from '@/lib/db';
-import Fav from '@/lib/Models/fav';
+import Claimed from '@/lib/Models/claimed';
 import Hub from '@/lib/Models/hub';
 import { NextResponse } from 'next/server';
 
+//get all claimed hubs
 export const GET = async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
@@ -24,19 +25,19 @@ export const GET = async (request: Request) => {
 
     await connect();
 
-    const favs = await Fav.findOne({ user: userId });
-    if (!favs) throw new Error("Can't load favourite hubs");
+    const claimed = await Claimed.findOne({ user: userId });
+    if (!claimed) throw new Error("Can't load claimed hubs");
 
-    const favItem = favs.hubs.slice(offset, end);
+    const claimedHubs = claimed.hubs.slice(offset, end);
 
     return NextResponse.json(
       {
         message: 'success',
-        data: favItem,
+        data: claimedHubs,
         pagination: {
-          totalItems: favs.hubs.length,
+          totalItems: claimed.hubs.length,
           currentPage: page,
-          totalPages: Math.ceil(favs.hubs.length / limit),
+          totalPages: Math.ceil(claimed.hubs.length / limit),
         },
       },
       { status: 200 }
@@ -70,9 +71,9 @@ export const PATCH = async (request: Request) => {
 
     await connect();
 
-    let fav = await Fav.findOne({ user: userId });
-    if (!fav) {
-      fav = new Fav({ user: userId, hubs: [] });
+    let claimed = await Claimed.findOne({ user: userId });
+    if (!claimed) {
+      claimed = new Claimed({ user: userId, hubs: [] });
     }
     const hub = await Hub.findById(hubId);
     if (!hub)
@@ -83,22 +84,26 @@ export const PATCH = async (request: Request) => {
 
     const { name, images, state } = hub;
 
-    const checkIndex = fav.hubs.findIndex(
+    const checkIndex = claimed.hubs.findIndex(
       (hub: { _id: any }) => hub._id.toString() === hubId
     );
     if (checkIndex === -1) {
-      fav.hubs.push({ _id: hubId, name: name, images: images, state: state });
-      await fav.save();
-      return NextResponse.json(
-        { message: 'Hub added to favourites!' },
-        { status: 200 }
+      claimed.hubs.push({
+        _id: hubId,
+        name: name,
+        images: images,
+        state: state,
+      });
+      await claimed.save();
+      await Hub.findByIdAndUpdate(
+        { _id: hubId },
+        { name, images, state, hubClaimed: true }
       );
+      return NextResponse.json({ message: 'Hub Claimed!' }, { status: 200 });
     } else {
-      fav.hubs.splice(checkIndex, 1);
-      await fav.save();
       return NextResponse.json(
-        { message: 'Hub removed from favourites!' },
-        { status: 200 }
+        { message: 'Hub has already been claimed!' },
+        { status: 400 }
       );
     }
   } catch (error: any) {

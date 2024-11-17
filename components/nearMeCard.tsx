@@ -1,22 +1,12 @@
 'use client';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { Button } from './ui/button';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import Image from 'next/image';
-import { Card } from './ui/card';
-import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { MapPin } from 'lucide-react';
-import { Playfair_Display } from 'next/font/google';
 import { Hubs } from './nearme';
 import { useRouter } from 'next/navigation';
-
-const playfair = Playfair_Display({
-  weight: '800',
-  subsets: ['latin'],
-  style: 'normal',
-});
 
 interface Hub {
   _id: string;
@@ -97,7 +87,7 @@ const NearMeCard = ({
       }}
       className={`w-10/12 lg:w-9/12 rounded-xl hover:cursor-grab active:cursor-grabbing relative origin-bottom `}
       drag="x"
-      dragConstraints={{ left: 5, right: 5 }}
+      dragConstraints={{ left: 50, right: 50 }}
       onDragEnd={handleDragEnd}
       onDrag={handleDrag}
       animate={{ scale: isFront ? 1 : 0.98 }}
@@ -152,9 +142,7 @@ const NearMeCard = ({
         </div>
       )}
       <div className="mt-2 absolute bottom-3 right-3 z-20">
-        <h2 className={cn('text-xl mx-1 text-white mb-2', playfair.className)}>
-          {hub.name}
-        </h2>
+        <h2 className={cn('text-xl mx-1 text-white mb-2')}>{hub.name}</h2>
         <div className="flex justify-end text-[#fc045c] text-xl">
           <MapPin />
           <p>{hub.state}</p>

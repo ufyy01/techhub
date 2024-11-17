@@ -3,16 +3,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { useEffect, useState } from 'react';
-import { Playfair_Display } from 'next/font/google';
 import NearMeCard from './nearMeCard';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Grid } from 'react-loader-spinner';
-
-const playfair = Playfair_Display({
-  weight: '600',
-  subsets: ['latin'],
-  style: 'italic',
-});
 
 export interface Hubs {
   data: Hub[];
@@ -137,7 +130,6 @@ const Nearme = () => {
         />
       </div>
     );
-  if (error) return <div>Error: {error}</div>;
 
   return (
     <div>
@@ -173,7 +165,7 @@ const Nearme = () => {
           </Alert>
         </div>
       )}
-      {!hubs && (
+      {error && (
         <div className="pb-8">
           <Alert className="w-9/12 mx-auto">
             <AlertTitle className="text-xl text-center font-semibold">
@@ -184,8 +176,8 @@ const Nearme = () => {
                 icon="gis:map-search"
                 style={{ width: '50', height: '50' }}
               />
-              Kindly allow access to your location to find amazing hubs near
-              you! Browse through all hubs 👇.
+              Something went wrong. Kindly allow access to your location to find
+              amazing hubs near you! Browse through all hubs 👇.
               <Link href="/get-hubs" className="block mt-2">
                 <Button>Find More</Button>
               </Link>

@@ -43,7 +43,6 @@ const RegisterSlider = () => {
           <SliderCards
             list={[
               'User: Ideal for explorers! Browse through hubs, find the best spaces, and save your top picks in your favorites folder.',
-              'Add your favorite hubs to a personal folder for quick access anytime.',
               'Manager: Perfect for hub owners! Create new hubs, claim existing ones, and showcase your co-working space to the community.',
             ]}
             text="Choose Your Role!"

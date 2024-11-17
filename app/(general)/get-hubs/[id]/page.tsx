@@ -1,20 +1,11 @@
+import ClaimBtn from '@/components/claimBtn';
 import FavBtn from '@/components/favBtn';
 import Slider from '@/components/image-slider';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { getUserId } from '@/getUserId';
+import { getSession } from '@/getSession';
 import { cn } from '@/lib/utils';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { InstagramLogoIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
-import { Playfair_Display } from 'next/font/google';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-
-const playfair = Playfair_Display({
-  weight: '800',
-  subsets: ['latin'],
-  style: 'normal',
-});
 
 const getHub = async (id: string) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_PROXY_URL}/hub/${id}`, {
@@ -33,21 +24,23 @@ const Page = async ({ params }: { params: any }) => {
   const id = params.id;
 
   const hub = await getHub(id);
-  const userId = await getUserId();
+  const user = await getSession();
+  const email = user?.email as string;
+  const userId = user?.id as string;
 
   return (
     <div>
       <Slider images={hub.data.images} />
       <div className="w-11/12 mx-auto my-5 px-2">
-        <h2 className={cn('text-xl text-center my-3', playfair.className)}>
-          {hub.data.name}
-        </h2>
+        <h2 className={cn('text-xl text-center my-3')}>{hub.data.name}</h2>
         <div className="relative my-4">
           <h4 className="text-center pb-2">Overview</h4>
           <div className="w-2 h-2 rounded-full bg-[#fc045c] absolute bottom-0 left-1/2"></div>
-          <div className="absolute -top-2 lg:-top-5 lg:left-40">
-            <FavBtn userId={userId} hubId={id} />
-          </div>
+          {user && user.role === 'user' && (
+            <div className="absolute -top-2 lg:-top-5 lg:left-40">
+              <FavBtn userId={user?.id} hubId={id} />
+            </div>
+          )}
         </div>
         <div className="md:flex justify-center gap-5 mx-2 text-center mb-3">
           {hub.data.email && (
@@ -139,7 +132,7 @@ const Page = async ({ params }: { params: any }) => {
           <div className="flex-none ">
             {hub.data.schedule.length > 0 && (
               <div className="dark:bg-black bg-white text-black mt-3 rounded-lg dark:text-white p-3 lg:w-fit shadow-md mx-2 text-center border-2">
-                <h4 className={playfair.className}>Opening Schedule</h4>
+                <h4>Opening Schedule</h4>
                 <ul className="flex flex-col items-center">
                   {hub.data.schedule.map((day: string, i: number) => (
                     <li key={i} className="my-2">
@@ -155,21 +148,25 @@ const Page = async ({ params }: { params: any }) => {
           <div>
             {hub.data.description && (
               <div className="dark:bg-black bg-white text-black mt-3 rounded-lg dark:text-white p-3 lg:w-fit shadow-md mx-2 text-center border-2 h-1/2">
-                <h4 className={playfair.className}>About Us</h4>
+                <h4>About Us</h4>
                 <p className="mt-3">{hub.data.description}</p>
               </div>
             )}
             {hub.data.notice && (
               <div className="dark:bg-black bg-white text-black mt-3 rounded-lg dark:text-white p-3 lg:w-fit shadow-md mx-2 text-center border-2 ">
-                <h4 className={playfair.className}>Notice</h4>
+                <h4>Notice</h4>
                 <p className="mt-3">{hub.data.notice}</p>
               </div>
             )}
           </div>
         </div>
-        <div className="text-center my-4">
-          {!hub.data.claimed && <Button>Claim Profile Here</Button>}
-        </div>
+        {user && user.role === 'manager' && (
+          <div className="text-center my-4">
+            {!hub.data.hubClaimed && (
+              <ClaimBtn email={email} userId={userId} hubId={id} />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

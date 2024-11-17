@@ -72,3 +72,33 @@ export const POST = async (request: Request) => {
     });
   }
 };
+
+export const PATCH = async (request: Request) => {
+  try {
+    const { role, email } = await request.json();
+
+    if (!role || !email) {
+      return NextResponse.json(
+        { message: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+    await connect();
+
+    const user = await User.findOneAndUpdate({ email: email }, { role: role });
+    if (!user)
+      return NextResponse.json(
+        { message: 'User not found 😒' },
+        { status: 400 }
+      );
+
+    return NextResponse.json(
+      { message: 'Profile has been updated 🎉' },
+      { status: 201 }
+    );
+  } catch (error: any) {
+    return NextResponse.json('Error updating user ' + error.message, {
+      status: 400,
+    });
+  }
+};

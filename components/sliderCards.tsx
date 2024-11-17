@@ -18,7 +18,7 @@ const SliderCards = ({
   return (
     <div
       className={cn(
-        'h-[80vh] md:h-screen md:fixed md:w-6/12 absolute shadow-inner shadow-slate-400',
+        'h-[65vh] md:h-screen md:fixed md:w-6/12 absolute shadow-inner shadow-slate-400',
         side === 'right'
           ? `md:rounded-tl-[20%] md:rounded-bl-[10%]`
           : 'md:rounded-tr-[20%] md:rounded-br-[10%]'

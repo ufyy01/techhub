@@ -10,7 +10,7 @@ const Page = () => {
       <div className="md:w-6/12">
         <RegisterSlider />
       </div>
-      <div className="md:w-6/12 ms-auto relative top-[90vh] md:top-0 md:flex flex-col justify-center items-center h-screen">
+      <div className="md:w-6/12 ms-auto relative top-[75vh] md:top-0 md:flex flex-col justify-center items-center h-screen">
         <RegisterPage />
         <div>
           <SocialLogin action="Register" />

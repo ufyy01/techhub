@@ -1,28 +1,17 @@
 import Nearme from '@/components/nearme';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Playfair_Display } from 'next/font/google';
 import FavoriteSlide from '@/components/favoriteSlide';
-import { getUserId } from '@/getUserId';
 import HeroAni from '@/components/heroAni';
-// import { motion } from 'framer-motion';
-
-const playfair = Playfair_Display({
-  weight: '500',
-  subsets: ['latin'],
-  style: 'italic',
-});
+import { getSession } from '@/getSession';
 
 export default async function Home() {
-  const userId = await getUserId();
+  const user = await getSession();
 
   return (
     <main>
       <div>
         <div className="text-center mt-4 mx-4">
-          <h1
-            className={`${playfair.className} text-xl md:text-3xl text-[#fc045c] pb-2`}
-          >
+          <h1 className="text-2xl md:text-3xl text-[#fc045c] pb-2">
             Find the Right Space to Do More
           </h1>
           <p className="text-sm text-[#fc045c] mb-2 text-center">
@@ -42,29 +31,29 @@ export default async function Home() {
           ></path>
         </svg>
       </div>
-      <div className="bg-black lg:h-[90vh] text-white -mt-1 pt-5">
+      <div className="bg-black text-white -mt-1 pt-5">
         <div className="lg:w-10/12 lg:mx-auto mx-4 mb-5">
           <div className="flex justify-between items-center">
             <h3 className="font-semibold">Featured</h3>
             <Link href="/get-hubs">
-              <p className="text-xs">All</p>
+              <p className="text-base">All</p>
             </Link>
           </div>
-          <p className="text-xs">Explore Hubs near you</p>
+          <p className="text-sm">Explore Hubs near you</p>
         </div>
         <Nearme />
-        {userId && (
+        {user && user.role === 'user' && (
           <div className="mt-10 pb-5">
             <div className="lg:w-10/12 lg:mx-auto mx-4 mb-5">
               <div className="flex justify-between items-center">
                 <h3 className="font-semibold">Favourite</h3>
                 <Link href="/profile">
-                  <p className="text-xs">All</p>
+                  <p className="text-base">All</p>
                 </Link>
               </div>
-              <p className="text-xs">Explore your favourite Hubs</p>
+              <p className="text-sm">Explore your favourite Hubs</p>
             </div>
-            <FavoriteSlide userId={userId} />
+            <FavoriteSlide userId={user.id} />
           </div>
         )}
       </div>

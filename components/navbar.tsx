@@ -1,24 +1,28 @@
 import Image from 'next/image';
 import { Button } from './ui/button';
 import Link from 'next/link';
-import { Playfair_Display } from 'next/font/google';
-import { ModeToggle } from './themeToggle';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { getSession } from '@/getSession';
+import LogoutForm from './logoutForm';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './ui/dialog';
 
-const playfair = Playfair_Display({
-  weight: '500',
-  subsets: ['latin'],
-  style: 'italic',
-});
-
-const Navbar = () => {
+const Navbar = async () => {
+  const session = await getSession();
   return (
-    <nav className="flex justify-between items-center p-2 mx-auto">
+    <nav className="flex justify-between items-center p-2 mx-auto lg:w-11/12">
       <Link href={'/'}>
         <Image
           src={
@@ -32,7 +36,7 @@ const Navbar = () => {
         />
       </Link>
       <div>
-        <Popover>
+        {/* <Popover>
           <PopoverTrigger asChild>
             <Button size="icon" variant="ghost">
               <Icon icon="subway:menu" className="text-[#fc045c]" />
@@ -41,11 +45,8 @@ const Navbar = () => {
           </PopoverTrigger>
           <PopoverContent className="lg:w-8/12 w-6/12">
             <div className="flex flex-wrap gap-2 text-center justify-center">
-              <Link href="/account/profile">
-                <Button
-                  className={`${playfair.className} text-sm shadow-md`}
-                  variant="outline"
-                >
+              <Link href="/profile">
+                <Button className="text-sm shadow-md" variant="outline">
                   <Icon
                     icon="iconamoon:profile-circle-fill"
                     className="me-2 text-[#fc045c]"
@@ -54,10 +55,7 @@ const Navbar = () => {
                 </Button>
               </Link>
               <Link href="/get-hubs">
-                <Button
-                  className={`${playfair.className} text-sm shadow-md`}
-                  variant="outline"
-                >
+                <Button className="text-sm shadow-md" variant="outline">
                   <Icon
                     icon="ph:building-office"
                     className="me-2 text-[#fc045c]"
@@ -66,10 +64,7 @@ const Navbar = () => {
                 </Button>
               </Link>
               <Link href="/create-hub">
-                <Button
-                  className={`${playfair.className} text-sm shadow-md`}
-                  variant="outline"
-                >
+                <Button className="text-sm shadow-md" variant="outline">
                   <Icon
                     icon="ph:building-office"
                     className="me-2 text-[#fc045c]"
@@ -77,30 +72,128 @@ const Navbar = () => {
                   Add Hub
                 </Button>
               </Link>
-              <Link href="/account/login">
-                <Button
-                  className={`${playfair.className} text-sm shadow-md`}
-                  variant="outline"
-                >
-                  <Icon
-                    icon="material-symbols:tv-signin-outline"
-                    className="me-2 text-[#fc045c]"
-                  />
-                  Login
-                </Button>
-              </Link>
-              <Link href="/account/register">
-                <Button
-                  className={`${playfair.className} text-sm shadow-md`}
-                  variant="outline"
-                >
-                  <Icon icon="mdi:register" className="me-2 text-[#fc045c]" />
-                  Sign Up
-                </Button>
-              </Link>
+              {!session && (
+                <>
+                  <Link href="/account/login">
+                    <Button className="text-sm shadow-md" variant="outline">
+                      <Icon
+                        icon="material-symbols:tv-signin-outline"
+                        className="me-2 text-[#fc045c]"
+                      />
+                      Login
+                    </Button>
+                  </Link>
+                  <Link href="/account/register">
+                    <Button className="text-sm shadow-md" variant="outline">
+                      <Icon
+                        icon="mdi:register"
+                        className="me-2 text-[#fc045c]"
+                      />
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
+              {session && <LogoutForm />}
             </div>
           </PopoverContent>
-        </Popover>
+        </Popover> */}
+        <Dialog>
+          <DialogTrigger>
+            <Button size="icon" type="button" variant="ghost">
+              <Icon icon="subway:menu" className="text-[#fc045c]" />
+              <span className="sr-only">menu</span>
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="lg:w-8/12 w-6/12">
+            <div className="flex flex-wrap gap-2 text-center justify-center">
+              <Link href="/profile">
+                <DialogClose>
+                  <Button
+                    className="text-sm shadow-md"
+                    type="button"
+                    variant="outline"
+                  >
+                    <Icon
+                      icon="iconamoon:profile-circle-fill"
+                      className="me-2 text-[#fc045c]"
+                    />
+                    Profile
+                  </Button>
+                </DialogClose>
+              </Link>
+              <Link href="/get-hubs">
+                <DialogClose>
+                  <Button
+                    className="text-sm shadow-md"
+                    type="button"
+                    variant="outline"
+                  >
+                    <Icon
+                      icon="ph:building-office"
+                      className="me-2 text-[#fc045c]"
+                    />
+                    Hubs
+                  </Button>
+                </DialogClose>
+              </Link>
+              <Link href="/create-hub">
+                <DialogClose>
+                  <Button
+                    className="text-sm shadow-md"
+                    type="button"
+                    variant="outline"
+                  >
+                    <Icon
+                      icon="ph:building-office"
+                      className="me-2 text-[#fc045c]"
+                    />
+                    Add Hub
+                  </Button>
+                </DialogClose>
+              </Link>
+              {!session && (
+                <>
+                  <Link href="/account/login">
+                    <DialogClose>
+                      <Button
+                        className="text-sm shadow-md"
+                        type="button"
+                        variant="outline"
+                      >
+                        <Icon
+                          icon="material-symbols:tv-signin-outline"
+                          className="me-2 text-[#fc045c]"
+                        />
+                        Login
+                      </Button>
+                    </DialogClose>
+                  </Link>
+                  <Link href="/account/register">
+                    <DialogClose>
+                      <Button
+                        className="text-sm shadow-md"
+                        type="button"
+                        variant="outline"
+                      >
+                        <Icon
+                          icon="mdi:register"
+                          className="me-2 text-[#fc045c]"
+                        />
+                        Sign Up
+                      </Button>
+                    </DialogClose>
+                  </Link>
+                </>
+              )}
+              {session && (
+                <DialogClose>
+                  <LogoutForm />
+                </DialogClose>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </nav>
   );
