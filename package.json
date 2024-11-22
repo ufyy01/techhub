@@ -43,6 +43,7 @@
     "react-loader-spinner": "^6.1.6",
     "react-paginate": "^8.2.0",
     "react-paystack": "^6.0.0",
+    "sharp": "^0.33.5",
     "sweetalert2": "^11.6.13",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
