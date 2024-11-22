@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from './ui/dialog';
 import { Button } from './ui/button';
-import { PaystackButton } from 'react-paystack';
+// import { PaystackButton } from 'react-paystack';
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 
@@ -102,8 +102,8 @@ const ClaimBtn = ({
   return (
     <>
       <Dialog>
-        <DialogTrigger>
-          <Button>Claim Hub</Button>
+        <DialogTrigger className="bg-black px-3 py-2 text-white rounded-xl">
+          Claim Hub
         </DialogTrigger>
         <DialogContent className="glass">
           <DialogHeader>

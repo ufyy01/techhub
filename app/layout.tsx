@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
-import Footer from '@/components/footer';
 
 export const metadata: Metadata = {
   title: 'Hub Radar',
@@ -18,7 +17,6 @@ export default function RootLayout({
       <body>
         <ThemeProvider attribute="class" defaultTheme="sytem" enableSystem>
           {children}
-          <Footer />
         </ThemeProvider>
       </body>
     </html>

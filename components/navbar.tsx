@@ -2,11 +2,6 @@ import Image from 'next/image';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { getSession } from '@/getSession';
 import LogoutForm from './logoutForm';
 import {
@@ -14,10 +9,9 @@ import {
   DialogClose,
   DialogContent,
   DialogDescription,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from './ui/dialog';
+import { DialogTitle } from '@radix-ui/react-dialog';
 
 const Navbar = async () => {
   const session = await getSession();
@@ -41,7 +35,13 @@ const Navbar = async () => {
             <Icon icon="subway:menu" className="text-[#fc045c]" />
             <span className="sr-only">menu</span>
           </DialogTrigger>
-          <DialogContent className="w-6/12">
+          <DialogContent className="w-11/12 md:w-6/12">
+            <DialogTitle>
+              <span className="sr-only">menu</span>
+            </DialogTitle>
+            <DialogDescription>
+              <span className="sr-only">menu</span>
+            </DialogDescription>
             <div className="flex flex-wrap gap-2 text-center justify-center">
               {session && (
                 <Link href="/profile">
