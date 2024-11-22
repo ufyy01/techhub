@@ -3,44 +3,8 @@ import Hub from '@/lib/Models/hub';
 import { getLocation } from '@/lib/utils';
 import { NextResponse } from 'next/server';
 
-// export const claimHub: RequestHandler = async (req, res) => {
-//   const { id } = req.params;
-//   const { email } = req.body;
-//   try {
-//     const hub = await HubModel.findById(id);
-//     if (!hub) throw new Error('Hub does not exist');
-
-//     if (!verfyEmail(email, hub))
-//       throw new Error('Please enter an official email');
-
-//     const mailOptions = {
-//       from: process.env.MAIL_USERNAME,
-//       to: email,
-//       subject: `Request to claim ${hub.name}`,
-//       text: 'That was easy!',
-//     };
-
-//     transporter.sendMail(mailOptions, function (error, info) {
-//       if (error) {
-//         return res
-//           .status(400)
-//           .json({
-//             status: 'error',
-//             message: 'Error sending message, please try again later.',
-//             info: error,
-//           });
-//       } else {
-//         return res.json({ status: 'success', message: info.response });
-//       }
-//     });
-//   } catch (error) {
-//     if (error instanceof Error) {
-//       res.status(400).json({ message: error.message });
-//     } else {
-//       res.status(500).json({ message: 'An unknown error occurred' });
-//     }
-//   }
-// };
+export const maxDuration = 10; // This function can run for a maximum of 5 seconds
+export const dynamic = 'force-dynamic';
 
 //Update hub
 export const PATCH = async (request: Request, context: { params: any }) => {

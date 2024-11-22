@@ -2,6 +2,9 @@ import { connect } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import Hub from '@/lib/Models/hub';
 
+export const maxDuration = 10; // This function can run for a maximum of 5 seconds
+export const dynamic = 'force-dynamic';
+
 //get hubs near a specific location
 export const GET = async (request: Request) => {
   try {

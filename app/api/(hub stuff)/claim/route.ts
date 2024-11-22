@@ -3,6 +3,9 @@ import Claimed from '@/lib/Models/claimed';
 import Hub from '@/lib/Models/hub';
 import { NextResponse } from 'next/server';
 
+export const maxDuration = 10; // This function can run for a maximum of 5 seconds
+export const dynamic = 'force-dynamic';
+
 //get all claimed hubs
 export const GET = async (request: Request) => {
   try {
