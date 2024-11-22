@@ -3,7 +3,7 @@ import Hub from '@/lib/Models/hub';
 import { getLocation } from '@/lib/utils';
 import { NextResponse } from 'next/server';
 
-export const maxDuration = 10; // This function can run for a maximum of 5 seconds
+export const maxDuration = 5; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
 
 //Update hub

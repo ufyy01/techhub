@@ -2,7 +2,7 @@ import { connect } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import User from '@/lib/Models/user';
 
-export const maxDuration = 10; // This function can run for a maximum of 5 seconds
+export const maxDuration = 5; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
 
 export const GET = async (request: Request) => {
