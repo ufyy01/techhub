@@ -1,7 +1,7 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -14,12 +14,16 @@ import {
 import { Card } from '@/components/ui/card';
 import Photocard from '@/components/photocard';
 import LoadingButton from '@/components/loadingButton';
-import { uploadPhoto } from '@/app/actions/uploadActions';
+import { deletePhoto, uploadPhoto } from '@/app/actions/uploadActions';
 import { useRouter } from 'next/navigation';
 import FormError from './formError';
 import FormSuccess from './formSuccess';
 
-const CreateForm = ({ userId }: { userId?: string }) => {
+interface HubImage {
+  public_id: string;
+  secure_url: string;
+}
+const UpdateForm = ({ hub, userId }: { hub: any; userId?: string }) => {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -33,7 +37,10 @@ const CreateForm = ({ userId }: { userId?: string }) => {
   const [phone, setPhone] = useState('');
   const [state, setState] = useState('');
   const [description, setDescription] = useState('');
-  const [images, setImages] = useState<any[]>([]);
+  const [existingImages, setExistingImages] = useState<any[]>(
+    hub?.images || []
+  );
+  const [newImages, setNewImages] = useState<File[]>([]);
   const [dayOpen, setDayOpen] = useState('');
   const [openTime, setOpenTime] = useState('');
   const [closingTime, setClosingTime] = useState('');
@@ -42,6 +49,25 @@ const CreateForm = ({ userId }: { userId?: string }) => {
   const [error, setError] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successfull, setSuccessfull] = useState('');
+
+  // Sync form state with the `hub` prop
+  useEffect(() => {
+    if (hub) {
+      setName(hub.name || '');
+      setEmail(hub.email || '');
+      setTwitter(hub.twitter || '');
+      setInstagram(hub.instagram || '');
+      setTiktok(hub.tiktok || '');
+      setWebsite(hub.website || '');
+      setAddress(hub.address || '');
+      setPhone(hub.phone || '');
+      setState(hub.state || '');
+      setDescription(hub.description || '');
+      setExistingImages(hub.images || []);
+      setSchedule(hub.schedule || []);
+      setNotice(hub.notice || '');
+    }
+  }, [hub]);
 
   const handleAddSchedule = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -61,110 +87,104 @@ const CreateForm = ({ userId }: { userId?: string }) => {
     i: number
   ) => {
     e.preventDefault();
-    const updatedSchedule = schedule.filter((_, index) => {
-      return index !== i;
-    });
-
+    const updatedSchedule = schedule.filter((_, index) => index !== i);
     setSchedule(updatedSchedule);
   };
 
-  const handleInputFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const MAX_IMAGES = 4;
+
+  const handleInputFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError('');
-    const images = e.target.files;
-    if (!images) {
-      return setError('Enter atleast 1 image');
-    }
-    const imageArray = Array.from(images);
-    const newFiles = imageArray.filter((file) => {
-      if (file.size < 1204 * 1204 && file.type.startsWith('image/')) {
+    const files = e.target.files;
+
+    if (!files) return;
+
+    const imageArray = Array.from(files);
+    const validImages = imageArray.filter((file) => {
+      if (file.size < 1024 * 1024 && file.type.startsWith('image/')) {
         return file;
       } else {
-        return setError('Invalid image format');
+        setError('Invalid image format or file size');
       }
     });
 
-    const MAX_IMAGES = 4;
+    const totalImages = existingImages.length + newImages.length;
 
-    setImages((prev: File[]) => {
-      const availableSlots = MAX_IMAGES - prev.length;
-      const filesToAdd = newFiles.slice(0, availableSlots);
+    if (totalImages + validImages.length > MAX_IMAGES) {
+      setError(`You can only upload up to ${MAX_IMAGES} images.`);
+      return;
+    }
 
-      if (availableSlots <= 0) {
-        setError('Please enter only 4 images');
-        return prev;
+    setNewImages((prev) => [...prev, ...validImages]);
+  };
+
+  const handlePreviewDelete = (index: number) => {
+    setNewImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handlePhotoDelete = async (public_id: string, index: number) => {
+    setExistingImages((prev) => prev.filter((_, i) => i !== index));
+    await deletePhoto(public_id);
+  };
+
+  const handleUpdateForm = async () => {
+    let cloudImages: {
+      msg?: string;
+      newPhotos?: HubImage[];
+      err?: any;
+    } = {
+      msg: '',
+      newPhotos: [],
+    };
+
+    if (newImages.length > 0) {
+      const formData = new FormData();
+      newImages.forEach((image) => {
+        formData.append('images', image);
+      });
+
+      // Upload images
+      cloudImages = await uploadPhoto(formData);
+
+      if (cloudImages.msg !== 'Upload successful') {
+        setErrorMessage('Failed to upload new images.');
+        console.error('Image upload failed:', cloudImages.msg);
+        return;
       }
+    }
 
-      return [...prev, ...filesToAdd];
-    });
-
-    // const photos = await uploadPhoto(newFiles);
-  };
-
-  const handlePreviewDelete = (
-    e: React.MouseEvent<HTMLButtonElement>,
-    index: number
-  ) => {
-    e.preventDefault();
-    const newImages = images.filter((_, i) => i !== index);
-    setImages(newImages);
-  };
-
-  const formData = new FormData();
-
-  images.map((image) => {
-    formData.append(`images`, image);
-  });
-
-  const handleAddForm = async () => {
-    const cloudImages = await uploadPhoto(formData);
-
-    const hub = {
+    const updatedHub = {
       name,
       email,
       twitter,
       instagram,
       tiktok,
       website,
-      address,
       phone,
       state,
+      address,
       description,
       schedule,
       notice,
-      images: cloudImages.newPhotos,
-      userId: userId,
+      images: [...existingImages, ...(cloudImages.newPhotos ?? [])], // Combines old and new images
     };
 
-    if (cloudImages.msg === 'Upload successfull') {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_PROXY_URL}/hub`, {
-        method: 'POST',
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_PROXY_URL}/hub/${hub._id}`,
+      {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(hub),
-      });
-
-      const data = await res.json();
-
-      if (res.status === 200) {
-        setName('');
-        setEmail('');
-        setTwitter('');
-        setInstagram('');
-        setTiktok('');
-        setWebsite('');
-        setAddress('');
-        setPhone('');
-        setState('');
-        setDescription('');
-        setImages([]);
-        setSchedule([]);
-        setNotice('');
-        setError('');
-        setErrorMessage('');
-        setSuccessfull(data.message);
-        router.push(`${process.env.NEXT_PUBLIC_URL}/profile`);
-      } else {
-        setErrorMessage(data.message);
+        body: JSON.stringify(updatedHub),
       }
+    );
+
+    const data = await res.json();
+
+    if (res.status === 200) {
+      setSuccessfull('Hub updated successfully');
+      router.push(`${process.env.NEXT_PUBLIC_URL}/get-hubs/${hub._id}`);
+    } else {
+      setError(data.message);
     }
   };
 
@@ -172,10 +192,10 @@ const CreateForm = ({ userId }: { userId?: string }) => {
     <main className="m-4 lg:w-10/12 mx-auto">
       <Card className="p-7 mx-auto">
         <div className="mb-4">
-          <h1 className="text-3xl mb-2">Add Hub</h1>
-          <p>Add your hub</p>
+          <h1 className="text-3xl mb-2">Update Hub</h1>
+          <p>Update your hub details</p>
         </div>
-        <form className="space-y-8" action={handleAddForm} ref={formRef}>
+        <form className="space-y-8" action={handleUpdateForm} ref={formRef}>
           <div className="border p-4 rounded-xl relative space-y-4 dark:border-white border-black">
             <p className="absolute bg-white dark:bg-black -top-3 right-4 px-2">
               Hub Details
@@ -360,13 +380,21 @@ const CreateForm = ({ userId }: { userId?: string }) => {
             </div>
 
             <div className="flex gap-2 flex-wrap">
-              {images.map((image, index) => (
+              {/* Render existing images */}
+              {existingImages.map((image, index) => (
                 <Photocard
-                  key={index}
-                  url={URL.createObjectURL(image)}
-                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                    handlePreviewDelete(e, index);
-                  }}
+                  key={`existing-${index}`}
+                  url={image.secure_url}
+                  onClick={() => handlePhotoDelete(image.public_id, index)}
+                />
+              ))}
+
+              {/* Render new images */}
+              {newImages.map((image, index) => (
+                <Photocard
+                  key={`new-${index}`}
+                  url={URL.createObjectURL(image)} // Use a preview URL for new images
+                  onClick={() => handlePreviewDelete(index)}
                 />
               ))}
             </div>
@@ -525,4 +553,4 @@ const CreateForm = ({ userId }: { userId?: string }) => {
   );
 };
 
-export default CreateForm;
+export default UpdateForm;

@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { SortOrder } from 'mongoose';
 import { getLocation, verfyEmail } from '@/lib/utils';
 import Hub from '@/lib/Models/hub';
+import Claimed from '@/lib/Models/claimed';
 
 export const maxDuration = 5; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
@@ -144,7 +145,21 @@ export const POST = async (request: Request) => {
       coordinates: [lng, lat],
     };
 
-    await Hub.create({ ...body, location });
+    const createdHub = await Hub.create({
+      ...body,
+      location,
+      hubClaimed: true,
+    });
+
+    let claimed = await Claimed.findOne({ user: body.userId });
+    if (!claimed) {
+      claimed = new Claimed({ user: body.userId, hubs: [] });
+    }
+
+    claimed.hubs.push({
+      _id: createdHub._id,
+    });
+    await claimed.save();
 
     return NextResponse.json(
       { message: 'Hub created successfully' },

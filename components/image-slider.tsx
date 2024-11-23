@@ -50,7 +50,7 @@ const Slider = ({ images }: { images: Image[] }) => {
             animate={positions[postionIndexes[index]]}
             variants={imageVariants}
             transition={{ duration: 0.5 }}
-            style={{ width: '40%', position: 'absolute' }}
+            style={{ width: '40%', position: 'absolute', height: '80%' }}
           />
         ))}
       </div>

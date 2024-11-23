@@ -43,13 +43,12 @@ export const PATCH = async (request: Request, context: { params: any }) => {
       type: 'Point',
       coordinates: [lng, lat],
     };
-    const newhub = await Hub.findByIdAndUpdate(
-      id,
-      { ...request.body },
-      location
-    );
+    const newhub = await Hub.findByIdAndUpdate(id, {
+      ...body,
+      location,
+    });
 
-    await newhub!.save();
+    await newhub.save();
 
     return NextResponse.json(
       { message: 'Hub updated successfully' },

@@ -19,8 +19,6 @@ import FormSuccess from '@/components/formSuccess';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import 'animate.css';
-import Link from 'next/link';
-import SocialLogin from './SocialLogin';
 
 type RegisterFormData = z.infer<typeof RegisterSchema>;
 

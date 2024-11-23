@@ -8,27 +8,9 @@ const FavSchema = new Schema({
   },
   hubs: [
     {
-      type: new mongoose.Schema({
-        name: {
-          type: String,
-          required: true,
-          unique: true,
-        },
-        images: [
-          {
-            public_id: {
-              type: String,
-            },
-            secure_url: {
-              type: String,
-            },
-          },
-        ],
-        state: {
-          type: String,
-          required: [true, 'Please enter state'],
-        },
-      }),
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Hub',
+      required: true,
     },
   ],
 });

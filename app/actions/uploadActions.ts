@@ -5,6 +5,7 @@ import fs from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 import os from 'os';
 import { v2 as cloudinary } from 'cloudinary';
+import { revalidatePath } from 'next/cache';
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -69,8 +70,29 @@ export const uploadPhoto = async (data: FormData) => {
       });
     });
 
-    return { msg: 'Upload successfull', newPhotos };
+    return { msg: 'Upload successful', newPhotos };
   } catch (error: any) {
     return { err: error.message };
+  }
+};
+
+export const deletePhoto = async (public_id: string) => {
+  try {
+    const result = await cloudinary.uploader.destroy(public_id, {
+      invalidate: true, // Ensures the resource is invalidated from the CDN cache
+    });
+
+    if (result.result === 'ok') {
+      console.log('Delete Successful:', result);
+    } else if (result.result === 'not found') {
+      console.log('The resource does not exist or was already deleted.');
+    } else {
+      console.log('Delete Failed:', result);
+    }
+
+    return result;
+  } catch (error: any) {
+    console.error('Error while deleting photo:', error.message);
+    throw new Error(error.message || 'Failed to delete photo');
   }
 };

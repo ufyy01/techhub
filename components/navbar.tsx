@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from './ui/dialog';
 import { DialogTitle } from '@radix-ui/react-dialog';
+import AddBtn from './addHub';
 
 const Navbar = async () => {
   const session = await getSession();
@@ -35,7 +36,7 @@ const Navbar = async () => {
             <Icon icon="subway:menu" className="text-[#fc045c]" />
             <span className="sr-only">menu</span>
           </DialogTrigger>
-          <DialogContent className="w-11/12 md:w-6/12">
+          <DialogContent className="w-11/12 md:w-6/12 z-[1000]">
             <DialogTitle>
               <span className="sr-only">menu</span>
             </DialogTitle>
@@ -76,8 +77,8 @@ const Navbar = async () => {
                   </Button>
                 </DialogClose>
               </Link>
-              {session && session.role === 'manager' && (
-                <Link href="/create-hub">
+              {session && session.role === 'manager' && session.email && (
+                <Link href="/add-hub">
                   <DialogClose>
                     <Button
                       className="text-sm shadow-md"

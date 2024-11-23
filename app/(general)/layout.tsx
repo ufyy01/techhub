@@ -1,5 +1,6 @@
 import Footer from '@/components/footer';
 import Navbar from '@/components/navbar';
+import CookiesConsent from '@/components/cookiesConsent';
 
 export default function UserLayout({
   children,
@@ -10,6 +11,8 @@ export default function UserLayout({
     <>
       <Navbar />
       {children}
+      <CookiesConsent />
+
       <Footer />
     </>
   );

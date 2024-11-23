@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import NearMeCard from './nearMeCard';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Grid } from 'react-loader-spinner';
+import { hasCookie } from 'cookies-next';
+import { useHubsStore } from '@/lib/Stores/hubsStore';
 
 export interface Hubs {
   data: Hub[];
@@ -18,23 +20,17 @@ export interface Hubs {
 interface Hub {
   _id: string;
   name: string;
-  username: string;
-  password: string;
   images: Array<{
-    public_id: string;
     secure_url: string;
   }>;
-  address: string;
   state: string;
-  schedule: string[];
   dist: {
     calculated: number;
   };
-  hubClaimed: boolean;
 }
 
 const Nearme = () => {
-  const [hubs, setHubs] = useState<Hubs | null>(null);
+  const { setHubs, hubs } = useHubsStore();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -98,22 +94,35 @@ const Nearme = () => {
       });
     };
 
-    // Call the function inside useEffect
-    const loadHubs = async () => {
-      setLoading(true);
-      try {
-        const hubs = await fetchHubsNearMe();
-        setHubs(hubs);
-      } catch (err) {
-        setError('Failed to load hubs');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (!sessionStorage.getItem('hubs-session-storage')) {
+      const timer = setTimeout(() => {
+        if (hasCookie('localConsent')) {
+          const loadHubs = async () => {
+            setLoading(true);
+            try {
+              const hubs = await fetchHubsNearMe();
+              setHubs(hubs.data);
+            } catch (err) {
+              setError('Failed to load hubs');
+              console.error(err);
+            } finally {
+              setLoading(false);
+            }
+          };
+          loadHubs();
+        } else {
+          setError(
+            'Local consent not given. Please accept the terms and conditions.'
+          );
+          setLoading(false);
+        }
+      }, 3000); // 3 seconds delay
+      return () => clearTimeout(timer);
+    }
+    setLoading(false);
 
-    loadHubs();
-  }, []);
+    // Cleanup timeout on component unmount
+  }, [setHubs]);
 
   if (loading)
     return (
@@ -133,20 +142,14 @@ const Nearme = () => {
 
   return (
     <div>
-      {hubs && hubs.data.length > 0 && (
+      {hubs && hubs.length > 0 && (
         <div className="grid place-items-center mt-8 h-full grid-cols-1 pb-8">
-          {hubs.data.map((hub, index) => (
-            <NearMeCard
-              hub={hub}
-              key={hub._id}
-              setHubs={setHubs}
-              cards={hubs.data}
-              index={index}
-            />
+          {hubs.map((hub, index) => (
+            <NearMeCard hub={hub} key={hub._id} cards={hubs} index={index} />
           ))}
         </div>
       )}
-      {hubs && hubs.data.length === 0 && (
+      {hubs && hubs.length === 0 && (
         <div className="pb-8">
           <Alert className="w-9/12 mx-auto">
             <AlertTitle className="text-xl text-center font-semibold">

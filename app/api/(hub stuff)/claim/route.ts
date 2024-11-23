@@ -33,10 +33,17 @@ export const GET = async (request: Request) => {
 
     const claimedHubs = claimed.hubs.slice(offset, end);
 
+    const hubInfo = await Promise.all(
+      claimedHubs.map(async (h: { _id: string }) => {
+        const hub = await Hub.findById(h._id);
+        return hub;
+      })
+    );
+
     return NextResponse.json(
       {
         message: 'success',
-        data: claimedHubs,
+        data: hubInfo,
         pagination: {
           totalItems: claimed.hubs.length,
           currentPage: page,
@@ -93,9 +100,6 @@ export const PATCH = async (request: Request) => {
     if (checkIndex === -1) {
       claimed.hubs.push({
         _id: hubId,
-        name: name,
-        images: images,
-        state: state,
       });
       await claimed.save();
       await Hub.findByIdAndUpdate(

@@ -1,40 +1,32 @@
 'use client';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { MapPin } from 'lucide-react';
-import { Hubs } from './nearme';
 import { useRouter } from 'next/navigation';
+import { useHubsStore } from '@/lib/Stores/hubsStore';
 
-interface Hub {
+export interface Hub {
   _id: string;
   name: string;
-  username: string;
-  password: string;
   images: Array<{
-    public_id: string;
     secure_url: string;
   }>;
-  address: string;
   state: string;
-  schedule: string[];
   dist: {
     calculated: number;
   };
-  hubClaimed: boolean;
 }
 
 const NearMeCard = ({
   hub,
-  setHubs,
   cards,
   index,
 }: {
   hub: Hub;
   cards: Hub[];
-  setHubs: Dispatch<SetStateAction<Hubs | null>>;
   index: number;
 }) => {
   const x = useMotionValue(0);
@@ -43,26 +35,21 @@ const NearMeCard = ({
   const [showGo, setShowGo] = useState(false);
 
   const router = useRouter();
+  const { removeHub, currentSlide, setCurrentSlide } = useHubsStore();
 
-  const isFront = hub._id === cards[0]._id;
+  const isFront = index === currentSlide;
 
-  const rotate = useTransform(() => {
-    const offset = isFront ? 0 : index % 2 ? 3 : -3;
-    return `${rotateRaw.get() + offset}deg`;
-  });
+  // const rotate = useTransform(() => {
+  //   const offset = isFront ? 0 : -3;
+  //   return `${rotateRaw.get() + offset}deg`;
+  // });
 
   const handleDragEnd = () => {
     if (Math.abs(x.get()) > 70) {
-      setHubs((prevHubs) => {
-        if (!prevHubs) return prevHubs;
-        const updatedData = prevHubs.data.filter(
-          (card) => card._id !== hub._id
-        );
-        return {
-          ...prevHubs,
-          data: updatedData,
-        };
-      });
+      // Remove hub from the Zustand store
+      removeHub(hub._id);
+
+      setCurrentSlide((prev: number) => Math.min(prev + 1, cards.length - 1));
     }
   };
 
@@ -81,9 +68,9 @@ const NearMeCard = ({
         gridRow: 1,
         gridColumn: 1,
         x,
-        rotate,
+        rotate: index === 0 || isFront ? 0 : -2,
         transition: '0.125s transform',
-        zIndex: index === 0 ? 100 : 100 - index,
+        zIndex: index === 0 || isFront ? 100 : 100 - index,
       }}
       className={`w-10/12 lg:w-9/12 rounded-xl hover:cursor-grab active:cursor-grabbing relative origin-bottom `}
       drag="x"

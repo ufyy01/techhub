@@ -1,4 +1,5 @@
 import ClaimBtn from '@/components/claimBtn';
+import EditBtn from '@/components/editBtn';
 import FavBtn from '@/components/favBtn';
 import Slider from '@/components/image-slider';
 import { getSession } from '@/getSession';
@@ -39,6 +40,11 @@ const Page = async ({ params }: { params: any }) => {
           {user && user.role === 'user' && (
             <div className="absolute -top-2 lg:-top-5 lg:left-40">
               <FavBtn userId={user?.id} hubId={id} />
+            </div>
+          )}
+          {user && user.role === 'manager' && (
+            <div className="absolute -top-2 lg:-top-5 lg:left-40">
+              <EditBtn hubId={id} userId={user?.id} />
             </div>
           )}
         </div>

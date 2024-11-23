@@ -105,7 +105,7 @@ const ClaimBtn = ({
         <DialogTrigger className="bg-black px-3 py-2 text-white rounded-xl">
           Claim Hub
         </DialogTrigger>
-        <DialogContent className="glass">
+        <DialogContent className="glass z-[2000]">
           <DialogHeader>
             <DialogTitle className="text-center text-white mb-3">
               Claim Hub

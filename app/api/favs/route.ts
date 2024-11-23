@@ -32,10 +32,17 @@ export const GET = async (request: Request) => {
 
     const favItem = favs.hubs.slice(offset, end);
 
+    const hubInfo = await Promise.all(
+      favItem.map(async (h: { _id: string }) => {
+        const hub = await Hub.findById(h._id);
+        return hub;
+      })
+    );
+
     return NextResponse.json(
       {
         message: 'success',
-        data: favItem,
+        data: hubInfo,
         pagination: {
           totalItems: favs.hubs.length,
           currentPage: page,
@@ -90,7 +97,7 @@ export const PATCH = async (request: Request) => {
       (hub: { _id: any }) => hub._id.toString() === hubId
     );
     if (checkIndex === -1) {
-      fav.hubs.push({ _id: hubId, name: name, images: images, state: state });
+      fav.hubs.push({ _id: hubId });
       await fav.save();
       return NextResponse.json(
         { message: 'Hub added to favourites!' },
