@@ -134,7 +134,7 @@ const Page = async ({ params }: { params: any }) => {
             </Link>
           )}
         </div>
-        <div className="lg:flex lg:pb-10 items-stretch">
+        <div className="lg:flex lg:pb-10 items-stretch w-full justify-center">
           <div className="flex-none ">
             {hub.data.schedule.length > 0 && (
               <div className="dark:bg-black bg-white text-black mt-3 rounded-lg dark:text-white p-3 lg:w-fit shadow-md mx-2 text-center border-2">
@@ -151,15 +151,15 @@ const Page = async ({ params }: { params: any }) => {
               </div>
             )}
           </div>
-          <div>
+          <div className="flex flex-col">
             {hub.data.description && (
-              <div className="dark:bg-black bg-white text-black mt-3 rounded-lg dark:text-white p-3 lg:w-fit shadow-md mx-2 text-center border-2 h-1/2">
+              <div className="dark:bg-black bg-white text-black mt-3 rounded-lg dark:text-white p-3 lg:w-full shadow-md mx-2 text-center border-2 h-1/2">
                 <h4>About Us</h4>
                 <p className="mt-3">{hub.data.description}</p>
               </div>
             )}
             {hub.data.notice && (
-              <div className="dark:bg-black bg-white text-black mt-3 rounded-lg dark:text-white p-3 lg:w-fit shadow-md mx-2 text-center border-2 ">
+              <div className="dark:bg-black bg-white text-black mt-3 rounded-lg dark:text-white p-3 lg:w-full shadow-md mx-2 text-center border-2 ">
                 <h4>Notice</h4>
                 <p className="mt-3">{hub.data.notice}</p>
               </div>

@@ -135,7 +135,7 @@ const CreateForm = ({ userId }: { userId?: string }) => {
       userId: userId,
     };
 
-    if (cloudImages.msg === 'Upload successfull') {
+    if (cloudImages.msg === 'Upload successful') {
       const res = await fetch(`${process.env.NEXT_PUBLIC_PROXY_URL}/hub`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -143,6 +143,10 @@ const CreateForm = ({ userId }: { userId?: string }) => {
       });
 
       const data = await res.json();
+
+      console.log(hub);
+      console.log(data);
+      console.log(res.status);
 
       if (res.status === 200) {
         setName('');

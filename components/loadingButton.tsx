@@ -6,7 +6,7 @@ const LoadingButton = () => {
   const { pending } = useFormStatus();
   return (
     <div>
-      <Button disabled={pending}>
+      <Button disabled={pending} type="submit">
         {pending && <span>Loading...</span>}
         {!pending && <span>Submit</span>}
       </Button>

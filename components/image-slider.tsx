@@ -71,7 +71,7 @@ const Slider = ({ images }: { images: Image[] }) => {
       </div>
 
       <Button
-        className="rounded-full absolute bottom-1 right-5 shadow-md p-6"
+        className="rounded-full absolute bottom-1 right-5 shadow-md p-4"
         onClick={handleNext}
       >
         <Icon icon="maki:arrow" style={{ width: '20', height: '20' }} />

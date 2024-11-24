@@ -144,7 +144,6 @@ export const POST = async (request: Request) => {
       type: 'Point',
       coordinates: [lng, lat],
     };
-
     const createdHub = await Hub.create({
       ...body,
       location,
@@ -160,7 +159,7 @@ export const POST = async (request: Request) => {
       _id: createdHub._id,
     });
     await claimed.save();
-
+    console.log(claimed.hubs);
     return NextResponse.json(
       { message: 'Hub created successfully' },
       { status: 200 }

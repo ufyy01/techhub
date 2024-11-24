@@ -25,8 +25,8 @@ const AddBtn = ({ email }: { email?: string }) => {
   };
   return (
     <>
-      <div className="flex justify-center items-center">
-        <Card className="text-center w-11/12 mx-auto h-[60vh] flex flex-col justify-center items-center px-8 gap-2">
+      <div className="flex justify-center items-center h-fit">
+        <Card className="text-center w-11/12 mx-auto h-fit py-5 flex flex-col justify-center items-center px-8 gap-2">
           <p className="font-semibold text-2xl mb-4">Add Hub</p>
           <p>
             Add and manage hub profile for just <strong>NGN 2,000!</strong>

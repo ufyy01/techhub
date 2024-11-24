@@ -17,14 +17,14 @@ const Page = async () => {
     <>
       {session && (
         <>
-          <Card className="w-fit ms-auto me-10 p-2 md:flex items-center glass">
-            <div>
+          <Card className="w-11/12 md:w-9/12 mx-auto p-2 md:flex items-center glass">
+            <div className="w-full md:w-5/12">
               <ProfileAni />
             </div>
-            <div>
+            <div className="text-center">
               <p>Welcome!</p>
               <p className="text-xl font-semibold">{session.email}</p>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 justify-center">
                 <UpdateRole user={user} />
                 <p>Role: {session.role.toUpperCase()}</p>
               </div>
