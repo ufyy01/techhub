@@ -88,12 +88,22 @@ export const {
       return session;
     },
 
-    async jwt({ token }) {
+    async jwt({ token, user }) {
+      if (token.role && token.id) {
+        return token; // The user has already signed in before
+      }
+
       if (!token.sub) return token;
-      const existingUser = await User.findOne({ email: token.email });
-      if (existingUser) {
-        token.role = existingUser.role;
-        token.id = existingUser._id;
+
+      try {
+        // Fetch user details from the database only if needed
+        const existingUser = await User.findOne({ email: token.email });
+        if (existingUser) {
+          token.role = existingUser.role;
+          token.id = existingUser._id;
+        }
+      } catch (error) {
+        console.error('Error fetching user during JWT callback:', error);
       }
       return token;
     },

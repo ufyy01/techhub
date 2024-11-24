@@ -19,6 +19,8 @@ export const connect = async () => {
     await mongoose.connect(MONGODB_URI!, {
       dbName: 'tech-hub',
       bufferCommands: true,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
     });
     console.log('Connected to the database.');
   } catch (error) {
