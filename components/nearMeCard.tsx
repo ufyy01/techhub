@@ -74,7 +74,7 @@ const NearMeCard = ({
       }}
       className={`w-10/12 lg:w-9/12 rounded-xl hover:cursor-grab active:cursor-grabbing relative origin-bottom `}
       drag="x"
-      dragConstraints={{ left: 50, right: 50 }}
+      dragConstraints={{ left: 2, right: 2 }}
       onDragEnd={handleDragEnd}
       onDrag={handleDrag}
       animate={{ scale: isFront ? 1 : 0.98 }}
