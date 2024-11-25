@@ -29,62 +29,100 @@ const UpdateRole = ({ user }: { user: User }) => {
       email: formData.get('email'),
       role: formData.get('role'),
     };
+
     const signMethod = {
       method: 'PATCH',
       body: JSON.stringify(user),
       headers: { 'Content-Type': 'application/json' },
     };
 
-    fetch(`${process.env.NEXT_PUBLIC_PROXY_URL}/user`, signMethod)
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status === 400) {
-          Swal.fire({
-            icon: 'success',
-            text: `${result.message}`,
-            showConfirmButton: false,
-            showCancelButton: false,
-            timer: 1500,
-            showClass: {
-              popup: `
-                animate__animated
-                animate__fadeInUp
-                animate__faster
-              `,
-            },
-            hideClass: {
-              popup: `
-                animate__animated
-                animate__fadeOutDown
-                animate__faster
-              `,
-            },
-          });
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_PROXY_URL}/user`,
+        signMethod
+      );
+      const result = await response.json();
+
+      if (response.status === 400) {
+        await Swal.fire({
+          icon: 'error',
+          text: `${result.message}`,
+          showConfirmButton: false,
+          showCancelButton: false,
+          timer: 1500,
+          showClass: {
+            popup: `
+              animate__animated
+              animate__fadeInUp
+              animate__faster
+            `,
+          },
+          hideClass: {
+            popup: `
+              animate__animated
+              animate__fadeOutDown
+              animate__faster
+            `,
+          },
+        });
+      } else {
+        const sessionResponse = await fetch('/api/auth/session', {
+          method: 'GET',
+        });
+
+        if (sessionResponse.ok) {
+          console.log('Session refreshed successfully');
         } else {
-          Swal.fire({
-            icon: 'success',
-            text: `${result.message}`,
-            showConfirmButton: false,
-            showCancelButton: false,
-            timer: 1500,
-            showClass: {
-              popup: `
-                animate__animated
-                animate__fadeInUp
-                animate__faster
-              `,
-            },
-            hideClass: {
-              popup: `
-                animate__animated
-                animate__fadeOutDown
-                animate__faster
-              `,
-            },
-          });
-          router.refresh();
+          console.error('Failed to refresh session');
         }
+        await Swal.fire({
+          icon: 'success',
+          text: `${result.message}`,
+          showConfirmButton: false,
+          showCancelButton: false,
+          timer: 1500,
+          showClass: {
+            popup: `
+              animate__animated
+              animate__fadeInUp
+              animate__faster
+            `,
+          },
+          hideClass: {
+            popup: `
+              animate__animated
+              animate__fadeOutDown
+              animate__faster
+            `,
+          },
+        });
+        // Optionally refresh the page or update the UI
+        router.refresh();
+      }
+    } catch (error) {
+      console.error('Error updating user:', error);
+      await Swal.fire({
+        icon: 'error',
+        text: `An unexpected error occurred. Please try again.`,
+        showConfirmButton: false,
+        showCancelButton: false,
+        timer: 1500,
+        showClass: {
+          popup: `
+            animate__animated
+            animate__fadeInUp
+            animate__faster
+          `,
+        },
+        hideClass: {
+          popup: `
+            animate__animated
+            animate__fadeOutDown
+            animate__faster
+          `,
+        },
       });
+    }
   };
 
   return (

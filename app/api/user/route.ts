@@ -1,6 +1,7 @@
 import { connect } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import User from '@/lib/Models/user';
+// import { getToken } from 'next-auth/jwt';
 
 export const maxDuration = 5; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
@@ -77,7 +78,12 @@ export const POST = async (request: Request) => {
 };
 
 export const PATCH = async (request: Request) => {
+  // const secret = process.env.AUTH_SECRET;
   try {
+    // const token = await getToken({ req: request, secret });
+    // if (!token) {
+    //   return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    // }
     const { role, email } = await request.json();
 
     if (!role || !email) {
@@ -89,11 +95,14 @@ export const PATCH = async (request: Request) => {
     await connect();
 
     const user = await User.findOneAndUpdate({ email: email }, { role: role });
-    if (!user)
+    if (!user) {
       return NextResponse.json(
         { message: 'User not found 😒' },
         { status: 400 }
       );
+    }
+    // token.role = user.role;
+    // token.refresh = true;
 
     return NextResponse.json(
       { message: 'Profile has been updated 🎉' },

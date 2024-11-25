@@ -88,23 +88,23 @@ export const {
       return session;
     },
 
-    async jwt({ token, user }) {
-      if (token.role && token.id) {
-        return token; // The user has already signed in before
-      }
-
-      if (!token.sub) return token;
-
-      try {
-        // Fetch user details from the database only if needed
+    async jwt({ token }) {
+      if (!token.role || token.refresh) {
         const existingUser = await User.findOne({ email: token.email });
         if (existingUser) {
           token.role = existingUser.role;
           token.id = existingUser._id;
+          token.refresh = false;
         }
-      } catch (error) {
-        console.error('Error fetching user during JWT callback:', error);
       }
+
+      if (token.role && token.id) {
+        token.refresh = true;
+        return token;
+      }
+
+      if (!token.sub) return token;
+
       return token;
     },
   },

@@ -4,7 +4,6 @@ import * as z from 'zod';
 
 import { signIn, signOut } from '@/auth';
 import { DEFAULT_LOGIN_REDIRECT_URL } from '@/routes';
-import { redirect } from 'next/navigation';
 import { LoginSchema } from '@/lib/Schemas/LoginSchema';
 import { AuthError } from 'next-auth';
 
